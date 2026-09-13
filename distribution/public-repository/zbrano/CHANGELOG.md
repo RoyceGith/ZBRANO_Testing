@@ -1,5 +1,12 @@
 # Change log
 
+## 0.13.250
+
+- Fix folder navigation intercepting upload and delete-folder clicks.
+- Add a native upload target, retry support and in-page folder confirmation.
+- Keep upload destinations stable while browsing folders.
+- Refresh file rows, icons, toolbar and responsive phone layout.
+
 ## 0.13.249
 
 - Add complete GitHub device authorization and Gmail Direct setup guides.

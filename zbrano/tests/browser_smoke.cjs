@@ -167,7 +167,7 @@ const onboardingFixture = {
     {id:"notifications",title:"Notifications and autonomy",description:"Choose notification delivery",ready:false,required:false,target:"notifications",last_check:null,skipped:false},
   ],
   installation_report: {
-    generated_at: 1788300000, version: "0.13.249", ready: true, attention_count: 0, ready_count: 5,
+    generated_at: 1788300000, version: "0.13.250", ready: true, attention_count: 0, ready_count: 5,
     checks: [
       {id:"home_assistant",title:"Home Assistant",state:"ready",required:true,detail:"Connected to Home Assistant",target:"home_assistant"},
       {id:"model",title:"AI model",state:"ready",required:true,detail:"gpt-5-mini is configured",target:"model"},
@@ -175,7 +175,7 @@ const onboardingFixture = {
       {id:"backup",title:"Backup and restore",state:"ready",required:false,detail:"A portable ZBRANO backup can be exported from Settings",target:"memory"},
       {id:"automation_health",title:"Automation safety",state:"ready",required:false,detail:"2 saved; 0 need permission; 0 paused after failures",target:"automations"},
     ],
-    support_summary: "ZBRANO installation report · v0.13.249\nOverall: Ready\nHome Assistant: Connected\nAI model: Configured\nDevice access: 3 sensor devices / 1 control devices\nPersistent storage: Ready\nAutomations: 2 saved / 0 permission issues / 0 failure pauses",
+    support_summary: "ZBRANO installation report · v0.13.250\nOverall: Ready\nHome Assistant: Connected\nAI model: Configured\nDevice access: 3 sensor devices / 1 control devices\nPersistent storage: Ready\nAutomations: 2 saved / 0 permission issues / 0 failure pauses",
   },
 };
 
@@ -209,7 +209,7 @@ function apiFixture(url, method = "GET") {
   if (pathname === "/api/health") {
     return {
       status: "ok",
-      version: "0.13.249",
+      version: "0.13.250",
       speech_provider: "openai",
       speech_providers: {openai: {configured: true}, elevenlabs: {configured: false}},
     };
@@ -321,7 +321,7 @@ function apiFixture(url, method = "GET") {
     return {files:[],folders:[{name:"Documents",path:"Documents",file_count:1}],current_folder:""};
   }
   if (pathname === "/api/release-memory-sync") {
-    return {enabled: false, state: "disabled", version: "0.13.249", task_active: false};
+    return {enabled: false, state: "disabled", version: "0.13.250", task_active: false};
   }
   if (pathname === "/api/tab-activity") return {revisions: {}};
   if (pathname === "/api/grinder-monitor/status") return {enabled: false, connected: false};
@@ -535,6 +535,58 @@ async function main() {
     assert.match(await page.locator("#shared-move-target").innerText(), /Shared Files \(main\)/);
     assert.equal(await page.locator("#shared-new-folder").isVisible(), true);
     assert.equal(await page.locator("#shared-upload-here").isVisible(), true);
+    let uploadAttempt=0;
+    await page.route('**/api/files/shared',async route=>{
+      if(route.request().method()!=='POST')return route.fallback();
+      uploadAttempt++;
+      const body=route.request().postDataBuffer().toString();
+      assert.match(body,/filename="shared-smoke.txt"/);
+      assert.match(body,/name="folder"\r\n\r\nDocuments/);
+      await route.fulfill({status:uploadAttempt===1?500:200,contentType:'application/json',body:JSON.stringify(uploadAttempt===1?{detail:'Fixture upload failed'}:{file_id:'upload-fixture'})});
+    });
+    for(let attempt=1;attempt<=2;attempt++) {
+      const [picker]=await Promise.all([page.waitForEvent('filechooser'),page.locator('#shared-upload-here').click()]);
+      await picker.setFiles({name:'shared-smoke.txt',mimeType:'text/plain',buffer:Buffer.from('shared file fixture')});
+      await page.waitForFunction(()=>!document.getElementById('shared-folder-upload').disabled);
+      if(attempt===1)assert.match(await page.locator('#shared-summary').innerText(),/Fixture upload failed/);
+    }
+    assert.equal(uploadAttempt,2,'Same file can be retried after failure');
+    await page.unroute('**/api/files/shared');
+    await page.locator('#shared-breadcrumbs [data-shared-folder=""]').click();
+    const folderDelete=page.locator('[data-delete-shared-folder="Documents"]');
+    await folderDelete.waitFor();
+    let folderDeleteCount=0;
+    await page.route('**/api/files/shared/folders',async route=>{
+      if(route.request().method()!=='DELETE')return route.fallback();
+      folderDeleteCount++;
+      assert.deepEqual(route.request().postDataJSON(),{folder:'Documents'});
+      await route.fulfill({status:folderDeleteCount===1?409:200,contentType:'application/json',body:JSON.stringify(folderDeleteCount===1?{detail:'Move or delete the files in this folder first'}:{deleted:'Documents'})});
+    });
+    await page.evaluate(()=>{window.sharedOriginalConfirm=window.confirm;window.confirm=()=>false;});
+    await folderDelete.click();
+    await page.locator('#shared-folder-confirm[open]').waitFor();
+    await page.locator('#shared-folder-confirm button[value="cancel"]').click();
+    assert.equal(folderDeleteCount,0,'Cancel must not delete a folder');
+    await folderDelete.click();
+    await page.locator('#shared-folder-confirm button[value="delete"]').click();
+    await page.waitForFunction(()=>document.getElementById('shared-summary').textContent.includes('Move or delete the files'));
+    await folderDelete.click();
+    await page.locator('#shared-folder-confirm button[value="delete"]').click();
+    await page.waitForFunction(()=>document.getElementById('shared-summary').textContent.includes('1 folder'));
+    assert.equal(folderDeleteCount,2,'In-page confirmation works without browser confirm');
+    await page.unroute('**/api/files/shared/folders');
+    await page.evaluate(()=>{window.confirm=window.sharedOriginalConfirm;delete window.sharedOriginalConfirm;});
+    if(process.env.ZBRANO_FILES_SCREENSHOT) {
+      for(const width of [1100,390])for(const theme of ['light','dark']) {
+        await page.setViewportSize({width,height:900});
+        await page.evaluate(value=>document.documentElement.dataset.theme=value,theme);
+        await page.locator('#files-panel').screenshot({path:process.env.ZBRANO_FILES_SCREENSHOT.replace('.png',`-${width}-${theme}.png`)});
+        assert.equal(await page.locator('#files-panel').evaluate(el=>el.scrollWidth<=el.clientWidth+1),true);
+      }
+      await page.setViewportSize({width:1100,height:720});
+      await page.evaluate(()=>document.documentElement.dataset.theme='light');
+    }
+
     await page.locator("#chat-tab").click();
     await page.locator("#chat-panel:not(.hidden)").waitFor();
 

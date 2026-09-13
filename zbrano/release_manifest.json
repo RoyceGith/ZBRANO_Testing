@@ -1,9 +1,9 @@
 {
-  "version": "0.13.249",
+  "version": "0.13.250",
   "project": "ZBRANO Workshop Assistant",
   "note": "Release and Change Log.md",
   "source": "RoyceGith/ZBRANO_Core main",
-  "summary": "Add complete GitHub and Gmail Direct setup guides with persistent links and installation-specific callback help.",
+  "summary": "Fix Shared Files upload and folder deletion and refresh the file browser layout.",
   "history_backfill": [
     {
       "version": "0.13.0",
@@ -1000,17 +1000,22 @@
     {
       "version": "0.13.248",
       "summary": "Restore original control space and modestly narrow only the desktop prompt row."
+    },
+    {
+      "version": "0.13.249",
+      "summary": "Add complete GitHub and Gmail Direct setup guides with persistent links and installation-specific callback help."
     }
   ],
   "release_entry": {
     "features": [
-      "Complete GitHub and Gmail Direct guides accessible before and after connection."
+      "Modern responsive Shared Files layout and in-page folder confirmation."
     ],
     "fixes": [
-      "Replace obsolete Gmail MCP help and provide the exact callback with copy and troubleshooting."
+      "Restrict folder navigation to actual buttons so upload and deletion work.",
+      "Preserve upload destinations and allow retry after failure."
     ],
     "validation": [
-      "Browser guide availability, Ingress callback and clipboard fallback tests; regression and integration suites; release validators."
+      "Browser native upload, retry, folder cancellation/deletion/error checks; regression and integration suites; release validators."
     ]
   },
   "features": [

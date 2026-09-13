@@ -14,6 +14,10 @@
   if (!tab || !panel || !rows) return;
 
   let currentFolder = "";
+  let loadRequest = 0;
+  let uploading = false;
+  const folderDialog = document.getElementById("shared-folder-confirm");
+  let pendingFolder = "";
   const escHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
   })[char]);
@@ -65,12 +69,14 @@
   }
 
   async function loadSharedFiles(folder = currentFolder) {
+    const request = ++loadRequest;
     currentFolder = String(folder || "");
     panel.dataset.sharedFolder = currentFolder;
     if (summary) summary.textContent = "Loading shared files…";
     const params = new URLSearchParams({sort:sort?.value || "date", order:order?.value || "desc", folder:currentFolder, _:String(Date.now())});
     try {
       const data = await api(`api/files/shared?${params.toString()}`, {cache:"no-store"});
+      if (request !== loadRequest) return;
       const files = Array.isArray(data.files) ? data.files : [];
       const folders = Array.isArray(data.folders) ? data.folders : [];
       window.zbranoVisibleSharedFiles = files;
@@ -79,7 +85,7 @@
         const row = document.createElement("tr");
         row.className = "shared-folder-row";
         const folderCount = Number(folder.file_count || 0);
-        row.innerHTML = `<td></td><td><button type="button" class="shared-folder-name" data-shared-folder="${escHtml(folder.path)}"><span class="shared-folder-icon" aria-hidden="true">&#128193;</span>${escHtml(folder.name)}</button></td><td>—</td><td>Folder</td><td>${folderCount} file${folderCount === 1 ? "" : "s"}</td><td><button type="button" class="shared-folder-delete" data-delete-shared-folder="${escHtml(folder.path)}">Delete</button></td>`;
+        row.innerHTML = `<td></td><td><button type="button" class="shared-folder-name" data-shared-folder="${escHtml(folder.path)}"><span class="shared-folder-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7V5h6l2 2h10v13H3z"/></svg></span>${escHtml(folder.name)}</button></td><td>—</td><td>Folder</td><td>${folderCount} file${folderCount === 1 ? "" : "s"}</td><td><button type="button" class="shared-folder-delete" data-delete-shared-folder="${escHtml(folder.path)}" title="Delete folder" aria-label="Delete folder"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"/></svg></button></td>`;
         rows.appendChild(row);
       }
       for (const file of files) {
@@ -94,6 +100,7 @@
       const location = currentFolder || "Shared Files";
       if (summary) summary.textContent = `${folders.length} folder${folders.length === 1 ? "" : "s"} · ${files.length} file${files.length === 1 ? "" : "s"} in ${location}`;
     } catch (error) {
+      if (request !== loadRequest) return;
       rows.replaceChildren();
       if (summary) summary.textContent = `Could not load Shared Files: ${error.message || error}`;
     }
@@ -112,30 +119,47 @@
 
   async function uploadFiles() {
     const files = Array.from(uploadInput?.files || []);
-    if (!files.length) return;
+    if (!files.length || uploading) return;
+    const destination = currentFolder;
+    uploading = true;
+    uploadInput.disabled = true;
+    uploadHere?.setAttribute("aria-busy", "true");
+    let uploaded = 0;
     if (summary) summary.textContent = `Uploading ${files.length} file${files.length === 1 ? "" : "s"}…`;
     try {
       for (const file of files) {
         const body = new FormData();
         body.append("file", file);
-        body.append("folder", currentFolder);
+        body.append("folder", destination);
         await api("api/files/shared", {method:"POST", body});
+        uploaded++;
       }
-      uploadInput.value = "";
       await loadSharedFiles();
     } catch (error) {
-      if (summary) summary.textContent = `Upload failed: ${error.message || error}`;
+      if (summary) summary.textContent = `Upload failed: ${error.message || error} (${uploaded}/${files.length})`;
+    } finally {
+      uploadInput.value = "";
+      uploadInput.disabled = false;
+      uploading = false;
+      uploadHere?.removeAttribute("aria-busy");
     }
   }
 
   panel.addEventListener("click", async event => {
-    const folderButton = event.target.closest("[data-shared-folder]");
+    const folderButton = event.target.closest("button[data-shared-folder]");
     if (folderButton) { event.preventDefault(); await loadSharedFiles(folderButton.dataset.sharedFolder || ""); return; }
     const deleteButton = event.target.closest("[data-delete-shared-folder]");
     if (!deleteButton) return;
     event.preventDefault();
-    const folder = deleteButton.dataset.deleteSharedFolder;
-    if (!window.confirm(`Delete the empty folder “${folder}”?`)) return;
+    pendingFolder = deleteButton.dataset.deleteSharedFolder;
+    document.getElementById("shared-folder-confirm-name").textContent = pendingFolder;
+    folderDialog.returnValue = "cancel";
+    folderDialog.showModal();
+  });
+  folderDialog.addEventListener("close", async () => {
+    const folder = pendingFolder;
+    pendingFolder = "";
+    if (folderDialog.returnValue !== "delete" || !folder) return;
     try {
       await api("api/files/shared/folders", {method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({folder})});
       await loadSharedFiles();
@@ -146,7 +170,6 @@
   tab.addEventListener("click", event => { event.preventDefault(); event.stopPropagation(); activateFilesPanel(); loadSharedFiles(); }, true);
   refresh?.addEventListener("click", event => { event.preventDefault(); loadSharedFiles(); });
   newFolder?.addEventListener("click", createFolder);
-  uploadHere?.addEventListener("click", () => uploadInput?.click());
   uploadInput?.addEventListener("change", uploadFiles);
   sort?.addEventListener("change", () => loadSharedFiles());
   order?.addEventListener("change", () => loadSharedFiles());

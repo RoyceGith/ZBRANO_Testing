@@ -5,6 +5,9 @@ automations. Use Setup &amp; safety, When, Only if, Then, and optional Outcomes 
 interactive flow canvas. Natural-language creation, templates, drag-and-drop,
 saved automation compatibility, and the full Advanced editor remain available.
 
+Version 0.13.250 fixes Shared Files upload and folder deletion, adds an in-page
+delete confirmation, and refreshes the file browser for desktop and phone.
+
 Version 0.13.249 adds complete GitHub and Gmail Direct setup guides. Open
 Plugins, find either plugin in Catalog or Installed, and select Setup guide.
 The Gmail guide includes the exact callback URL for your installation.

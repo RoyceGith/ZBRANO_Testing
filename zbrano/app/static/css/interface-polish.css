@@ -96,3 +96,46 @@
 @media(min-width:701px) {
   #chat-form { box-sizing:border-box; width:90%; margin-left:auto; margin-right:auto; }
 }
+
+/* Shared Files: a calm file browser with direct actions and readable rows. */
+#files-panel { gap:1rem; background:var(--panel); }
+#files-panel .shared-files-eyebrow { display:none; }
+#files-panel .shared-files-header { padding:.5rem .2rem; }
+#files-panel .shared-files-header h2 { font-size:1.4rem; font-weight:650; }
+#files-panel .shared-files-primary-actions { gap:.6rem; }
+#files-panel .shared-upload-primary { position:relative; display:inline-flex; align-items:center; justify-content:center; gap:.4rem; box-sizing:border-box; min-height:42px; padding:.55rem 1rem; border:1px solid var(--cyan); border-radius:10px; background:var(--cyan); color:#07151c; font-size:.8rem; font-weight:650; cursor:pointer; overflow:hidden; }
+#files-panel #shared-folder-upload { position:absolute; inset:0; width:100%; height:100%; margin:0; padding:0; opacity:0; cursor:pointer; }
+#files-panel .shared-upload-primary:focus-within { outline:2px solid var(--text); outline-offset:3px; }
+#files-panel .shared-upload-primary[aria-busy] { opacity:.6; cursor:wait; }
+#files-panel .shared-files-commandbar { border:0; border-radius:0; padding:.6rem 0; background:transparent; box-shadow:none; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+#files-panel .shared-files-summary { background:transparent; border-radius:0; padding:0 .2rem; font-size:.76rem; }
+#files-panel .shared-files-table-wrap { border-radius:12px; box-shadow:none; background:var(--surface); min-height:12rem; }
+#files-panel .shared-files-table { width:100%; min-width:0; }
+#files-panel .shared-files-table th { text-transform:none; letter-spacing:0; font-size:.73rem; font-weight:600; }
+#files-panel .shared-files-table td { padding:.8rem; }
+#files-panel .shared-files-table tr:has(input:checked) { background:color-mix(in srgb,var(--cyan) 9%,var(--surface)); }
+#files-panel :is(.shared-folder-name,.shared-file-name) { font-weight:550; box-shadow:none; overflow-wrap:anywhere; }
+#files-panel :is(.shared-folder-icon,.shared-file-icon) { width:2.2rem; height:2.2rem; border:0; border-radius:8px; }
+#files-panel .shared-folder-delete { display:inline-grid; place-items:center; width:36px; height:36px; padding:.5rem; border:0; opacity:1; border-radius:8px; }
+#files-panel svg { width:1.15rem; height:1.15rem; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+#shared-folder-confirm { max-width:min(28rem,calc(100vw - 3rem)); padding:1.5rem; border:1px solid var(--line); border-radius:16px; background:var(--surface-strong); color:var(--text); box-shadow:0 20px 70px #0004; }
+#shared-folder-confirm::backdrop { background:#0007; }
+#shared-folder-confirm form { display:block; }
+#shared-folder-confirm h3 { margin:0 0 .8rem; }
+#shared-folder-confirm-name { font-weight:650; overflow-wrap:anywhere; }
+#shared-folder-confirm form > div { display:flex; justify-content:flex-end; gap:.6rem; margin-top:1.3rem; }
+@media(max-width:700px) {
+  #files-panel .shared-files-primary-actions > :is(button,label) { flex:1; min-height:44px; }
+  #files-panel .shared-files-table :is(th,td):nth-child(3),#files-panel .shared-files-table :is(th,td):nth-child(4) { display:none; }
+  #files-panel .shared-files-table td { padding:.55rem .35rem; }
+  #files-panel .shared-files-table th { padding:.65rem .35rem; }
+  #files-panel .shared-folder-delete { width:44px; height:44px; }
+  #files-panel .shared-files-selection-tools { gap:.35rem; }
+  #files-panel .shared-files-commandbar :is(button,select) { min-height:40px; }
+}
+
+#files-panel :is(button,select) { box-shadow:none; color:var(--text); background-color:var(--surface-strong); }
+#files-panel .shared-upload-primary { color:#fff!important; }
+:root[data-theme="dark"] #files-panel .shared-upload-primary { color:#07151c!important; }
+#files-panel :is(.shared-folder-delete,.shared-delete-action) { color:#b13943; }
+:root[data-theme="dark"] #files-panel :is(.shared-folder-delete,.shared-delete-action) { color:#ff9da4; }

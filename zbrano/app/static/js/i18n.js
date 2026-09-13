@@ -3,6 +3,9 @@
 (() => {
   const supported = Object.freeze({en: "English", el: "Greek", it: "Italian", fr: "French"});
   const rows = {
+    "Delete folder?": ["Διαγραφή φακέλου;", "Eliminare la cartella?", "Supprimer le dossier ?"],
+    "Delete folder": ["Διαγραφή φακέλου", "Elimina cartella", "Supprimer le dossier"],
+    "Only empty folders can be deleted. Move or delete their contents first.": ["Μόνο κενοί φάκελοι μπορούν να διαγραφούν. Μετακινήστε ή διαγράψτε πρώτα τα περιεχόμενά τους.", "Si possono eliminare solo cartelle vuote. Sposta o elimina prima il contenuto.", "Seuls les dossiers vides peuvent être supprimés. Déplacez ou supprimez d’abord leur contenu."],
     "About": ["Σχετικά", "Informazioni", "À propos"],
     "About ZBRANO": ["Σχετικά με το ZBRANO", "Informazioni su ZBRANO", "À propos de ZBRANO"],
     "Access": ["Πρόσβαση", "Accesso", "Accès"],

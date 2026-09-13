@@ -1,9 +1,12 @@
-## ZBRANO v0.13.249
+## ZBRANO v0.13.250
 
 ZBRANO combines Home Assistant chat, voice, entity control, memory, notifications,
 calendar and contact tools, plugins, and evidence-based automations. Automation Studio now uses
 a visual building-block toolbox, interactive node canvas, and contextual inspector;
 the established automation engine and stored definitions remain compatible.
+
+Version 0.13.250 fixes Shared Files upload and folder deletion, adds an in-page
+delete confirmation, and refreshes the file browser for desktop and phone.
 
 Version 0.13.249 adds complete GitHub and Gmail Direct setup guides. Open
 Plugins, find either plugin in Catalog or Installed, and select Setup guide.

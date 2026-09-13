@@ -773,12 +773,13 @@ ha_ws = HomeAssistantWebSocketClient(
 
 app = FastAPI(
     title="ZBRANO",
-    version="0.13.251",
+    version="0.13.252",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
 )
 
 from .services.request_security import RequestSecurityMiddleware
+from .services.action_policy import LOCAL_APPROVAL_TOOLS, local_action_calls, attachment_model_input
 
 app.add_middleware(
     RequestSecurityMiddleware,
@@ -1693,9 +1694,9 @@ async def execute_tool_calls(
         elif name not in allowed_names:
             result: dict[str, Any] = {"error": f"Tool is not allowed: {name}"}
         elif permission == "write" and call_id in denied_workshop_call_ids:
-            result = {"error": "User denied this Knowledge Memory change."}
+            result = {"error": "User denied this change."}
         elif permission == "write" and call_id not in approved_workshop_call_ids:
-            result = {"error": "Explicit user approval is required before this Knowledge Memory change."}
+            result = {"error": "Explicit user approval is required before this change."}
         else:
             try:
                 if name == "get_home_assistant_history":
@@ -1773,12 +1774,12 @@ async def execute_tool_calls(
                         "note": "Inventory metadata only; live state values are intentionally excluded.",
                     }
                 elif name == "turn_on_home_assistant_entity":
-                    if load_preferences()["confirmation_strictness"] == "cautious":
+                    if load_preferences()["confirmation_strictness"] == "cautious" and call_id not in approved_workshop_call_ids:
                         result = {"error": "Cautious mode requires explicit confirmation through the local confirmation flow."}
                     else:
                         result = await ha_set_power(arguments["entity_id"], True)
                 elif name == "turn_off_home_assistant_entity":
-                    if load_preferences()["confirmation_strictness"] == "cautious":
+                    if load_preferences()["confirmation_strictness"] == "cautious" and call_id not in approved_workshop_call_ids:
                         result = {"error": "Cautious mode requires explicit confirmation through the local confirmation flow."}
                     else:
                         result = await ha_set_power(arguments["entity_id"], False)
@@ -1832,6 +1833,7 @@ async def execute_tool_calls(
             and
             permission == "write"
             and call_id in approved_workshop_call_ids
+            and name not in LOCAL_APPROVAL_TOOLS
             and workshop_result_error(result)
         ):
             result = await reconcile_workshop_memory_write(name, arguments, result)
@@ -2036,12 +2038,13 @@ async def run_zbrano(
     message: str,
     session_id: str = "default",
     assistant_context: str = "",
+    attachment_data: str = "",
 ) -> dict[str, Any]:
     pending_workshop = PENDING_WORKSHOP_APPROVALS.get(session_id)
     workshop_decision = workshop_memory_approval_decision(message)
     if pending_workshop and workshop_decision is not None:
         PENDING_WORKSHOP_APPROVALS.pop(session_id, None)
-        if workshop_decision == "task" and not pending_has_gmail_write(pending_workshop):
+        if workshop_decision == "task" and not pending_has_gmail_write(pending_workshop) and not local_action_calls(pending_workshop["calls"]):
             grant_workshop_memory_task_approval(session_id)
         elif workshop_decision == "deny":
             WORKSHOP_TASK_APPROVAL_GRANTS.pop(session_id, None)
@@ -2094,6 +2097,7 @@ async def run_zbrano(
                     if assistant_context
                     else []
                 )
+                + attachment_model_input(attachment_data)
                 + [{"role": "user", "content": message}]
             ),
             "tools": cost_scoped_runtime_tools(message=message, workshop_scope=workshop_scope),
@@ -2113,7 +2117,7 @@ async def run_zbrano(
         if workshop_budget is None and has_workshop_tool_calls(
             calls,
             workshop_memory_tool_permission,
-            GMAIL_DIRECT_TOOL_NAMES,
+            GMAIL_DIRECT_TOOL_NAMES | LOCAL_APPROVAL_TOOLS,
         ):
             workshop_scope = True
             workshop_budget = new_workshop_budget(message)
@@ -2150,6 +2154,7 @@ async def run_zbrano(
             direct_save_notice = memory_save_phase_notice(calls)
         if write_calls and (
             gmail_direct_write_calls(calls)
+            or local_action_calls(calls)
             or not (direct_save or workshop_memory_task_approval_active(session_id))
         ):
             prompt = store_workshop_memory_approval(
@@ -2334,7 +2339,7 @@ async def continue_workshop_memory_approval(
     workshop_scope = is_workshop_memory_intent(request_message) or has_workshop_tool_calls(
         list(pending.get("calls") or []),
         workshop_memory_tool_permission,
-        GMAIL_DIRECT_TOOL_NAMES,
+        GMAIL_DIRECT_TOOL_NAMES | LOCAL_APPROVAL_TOOLS,
     )
     workshop_budget = pending.get("cost_budget")
     if workshop_scope and not isinstance(workshop_budget, dict):
@@ -2394,6 +2399,7 @@ async def continue_workshop_memory_approval(
         )
         if write_calls and (
             gmail_direct_write_calls(calls)
+            or local_action_calls(calls)
             or not (direct_save or workshop_memory_task_approval_active(session_id))
         ):
             prompt = store_workshop_memory_approval(
@@ -2436,7 +2442,7 @@ async def continue_workshop_memory_approval(
     }
 
 
-async def _run_zbrano_stream_events(message: str, session_id: str = "default", search_mode: str = "auto") -> AsyncIterator[bytes]:
+async def _run_zbrano_stream_events(message: str, session_id: str = "default", search_mode: str = "auto", attachment_data: str = "") -> AsyncIterator[bytes]:
     search_mode = agent_search_mode(search_mode)
     yield stream_event("status", message="Searching the web..." if search_mode == "search" and not developer_mode_enabled() else "Thinking…")
 
@@ -2444,14 +2450,14 @@ async def _run_zbrano_stream_events(message: str, session_id: str = "default", s
     workshop_decision = workshop_memory_approval_decision(message)
     if pending_workshop and workshop_decision is not None:
         PENDING_WORKSHOP_APPROVALS.pop(session_id, None)
-        if workshop_decision == "task" and not pending_has_gmail_write(pending_workshop):
+        if workshop_decision == "task" and not pending_has_gmail_write(pending_workshop) and not local_action_calls(pending_workshop["calls"]):
             grant_workshop_memory_task_approval(session_id)
         elif workshop_decision == "deny":
             WORKSHOP_TASK_APPROVAL_GRANTS.pop(session_id, None)
         approved = workshop_decision in {"once", "task"}
         yield stream_event(
             "status",
-            message="Executing approved Knowledge Memory change…" if approved else "Denying Knowledge Memory change…",
+            message=("Executing approved changes..." if approved else "Cancelling proposed changes...") if local_action_calls(pending_workshop["calls"]) else "Executing approved Knowledge Memory change…" if approved else "Denying Knowledge Memory change…",
         )
         result = await continue_workshop_memory_approval(
             pending_workshop,
@@ -2618,6 +2624,7 @@ async def _run_zbrano_stream_events(message: str, session_id: str = "default", s
                     if get_session_entity(session_id)
                     else []
                 )
+                + attachment_model_input(attachment_data)
                 + [{"role": "user", "content": message}]
             ),
             "tools": cost_scoped_runtime_tools(search_mode, message, workshop_scope),
@@ -2685,7 +2692,7 @@ async def _run_zbrano_stream_events(message: str, session_id: str = "default", s
         if workshop_budget is None and has_workshop_tool_calls(
             calls,
             workshop_memory_tool_permission,
-            GMAIL_DIRECT_TOOL_NAMES,
+            GMAIL_DIRECT_TOOL_NAMES | LOCAL_APPROVAL_TOOLS,
         ):
             workshop_scope = True
             workshop_budget = new_workshop_budget(message)
@@ -2759,6 +2766,7 @@ async def _run_zbrano_stream_events(message: str, session_id: str = "default", s
             memory_phase_notice_sent = True
         if write_calls and (
             gmail_direct_write_calls(calls)
+            or local_action_calls(calls)
             or not (direct_save or workshop_memory_task_approval_active(session_id))
         ):
             yield stream_event("activity", id=activity_id, state="waiting_approval", **activity_meta)
@@ -2904,12 +2912,12 @@ async def _run_zbrano_stream_events(message: str, session_id: str = "default", s
     raise OpenAIError("ZBRANO streaming tool loop ended unexpectedly")
 
 
-async def run_zbrano_stream(message: str, session_id: str = "default", search_mode: str = "auto") -> AsyncIterator[bytes]:
+async def run_zbrano_stream(message: str, session_id: str = "default", search_mode: str = "auto", attachment_data: str = "") -> AsyncIterator[bytes]:
     """Persist a completed streamed exchange while forwarding events unchanged."""
     reply_parts: list[str] = []
     completed = False
     try:
-        async for event_bytes in _run_zbrano_stream_events(message, session_id, search_mode):
+        async for event_bytes in _run_zbrano_stream_events(message, session_id, search_mode, **({"attachment_data": attachment_data} if attachment_data else {})):
             try:
                 event = json.loads(event_bytes.decode("utf-8"))
             except (UnicodeDecodeError, json.JSONDecodeError):
@@ -2943,8 +2951,8 @@ async def chat_websocket(websocket: WebSocket) -> None:
         request = ChatRequest.model_validate(payload)
 
         async def send_stream() -> None:
-            effective_message=request.message+attachment_context(request.session_id,request.attachment_ids)
-            async for event_bytes in run_zbrano_stream(effective_message, request.session_id, request.search_mode):
+            attachment_data=attachment_context(request.session_id,request.attachment_ids)
+            async for event_bytes in run_zbrano_stream(request.message, request.session_id, request.search_mode, attachment_data=attachment_data):
                 event_text = event_bytes.decode("utf-8").strip()
                 if event_text:
                     await websocket.send_text(event_text)
@@ -2991,8 +2999,8 @@ async def chat_websocket(websocket: WebSocket) -> None:
 async def chat_stream(request: ChatRequest) -> StreamingResponse:
     async def generate() -> AsyncIterator[bytes]:
         try:
-            effective_message=request.message+attachment_context(request.session_id,request.attachment_ids)
-            async for event in run_zbrano_stream(effective_message, request.session_id, request.search_mode):
+            attachment_data=attachment_context(request.session_id,request.attachment_ids)
+            async for event in run_zbrano_stream(request.message, request.session_id, request.search_mode, attachment_data=attachment_data):
                 yield event
         except (OpenAIError, MCPError, httpx.HTTPError) as exc:
             yield stream_event("error", message=str(exc))
@@ -3012,7 +3020,7 @@ async def health() -> dict[str, Any]:
     configured_speech_provider = SPEECH_PROVIDER if SPEECH_PROVIDER in {"openai", "elevenlabs"} else "openai"
     return {
         "status": "ok",
-        "version": "0.13.251",
+        "version": "0.13.252",
         "home_assistant_configured": bool(SUPERVISOR_TOKEN),
         "workshop_memory_configured": True,
         "knowledge_memory_mode": "built_in",
@@ -5821,8 +5829,8 @@ async def approved_ha_entities() -> dict[str, Any]:
         if record.get("access") == "low_risk_control_proposed"
     )
     return {
-        "read_entities": sorted(set(read_entities) | HA_READ_ENTITIES),
-        "control_entities": sorted(set(control_entities) | HA_CONTROL_ENTITIES),
+        "read_entities": sorted(set(read_entities) | (HA_READ_ENTITIES - set(policy))),
+        "control_entities": sorted(set(control_entities) | (HA_CONTROL_ENTITIES - set(policy))),
         "safe_control_domains": sorted(SAFE_CONTROL_DOMAINS),
         # Return the complete policy so aliases on disabled/unapproved entities
         # are restored when the Entities tab is opened again. Approval lists
@@ -6441,7 +6449,10 @@ async def generate_speech(request: SpeechRequest) -> Response:
 @app.post("/api/chat")
 async def chat(request: ChatRequest) -> dict[str, Any]:
     try:
-        return await run_zbrano(request.message, request.session_id)
+        return await run_zbrano(request.message, request.session_id, **(
+            {"attachment_data": attachment_context(request.session_id, request.attachment_ids)}
+            if request.attachment_ids else {}
+        ))
     except (OpenAIError, MCPError, httpx.HTTPError) as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 

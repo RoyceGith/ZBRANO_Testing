@@ -4,6 +4,7 @@ import json
 import time
 from collections.abc import Callable
 from typing import Any
+from .action_policy import local_action_calls
 
 
 PENDING_WORKSHOP_APPROVALS: dict[str, dict[str, Any]] = {}
@@ -266,6 +267,16 @@ def workshop_tool_display_name(name: str) -> str:
 
 def workshop_memory_approval_prompt(calls: list[dict[str, Any]]) -> str:
     writes = workshop_memory_write_calls(calls)
+    if local_action_calls(calls):
+        lines = ["Approval required for these proposed changes:"]
+        for call in writes:
+            name = workshop_tool_display_name(str(call.get("name") or ""))
+            arguments = str(call.get("arguments") or "{}")
+            # Keep proposed content literal, including Markdown supplied by a model.
+            fence = "`" * max(3, len(arguments) - len(arguments.replace("`", "")) + 1)
+            lines.append(f"**{name}**\n\n{fence}json\n{arguments}\n{fence}\n")
+        lines.append("No changes have run. Reply **approve** for these exact changes or **cancel** to deny.")
+        return "\n".join(lines)
     gmail_writes = _gmail_write_calls(calls)
     lines = [
         "Gmail Direct is requesting permission to create an unsent draft:"

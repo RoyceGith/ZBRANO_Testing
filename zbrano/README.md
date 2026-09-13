@@ -1,9 +1,12 @@
-# ZBRANO v0.13.251
+# ZBRANO v0.13.252
 
 Automation Studio provides a graphical, step-by-step workflow for Home Assistant
 automations. Use Setup &amp; safety, When, Only if, Then, and optional Outcomes beside the
 interactive flow canvas. Natural-language creation, templates, drag-and-drop,
 saved automation compatibility, and the full Advanced editor remain available.
+
+Version 0.13.252 fixes disabled-device precedence and separates attachments from commands.
+Model-selected local changes require approval of the proposed actions.
 
 Version 0.13.251 requires Home Assistant Ingress for browser access, blocks static-file
 traversal, and limits optional direct access to paired Assist requests. For Assist,

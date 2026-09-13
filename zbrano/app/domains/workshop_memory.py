@@ -323,6 +323,9 @@ def workshop_memory_function_tools() -> list[dict[str, Any]]:
     ]
 
 def workshop_memory_tool_permission(name: str) -> str | None:
+    from ..services.action_policy import LOCAL_APPROVAL_TOOLS
+    if name in LOCAL_APPROVAL_TOOLS:
+        return "write"
     if name == "write_project_note":
         return "write"
     if name in {

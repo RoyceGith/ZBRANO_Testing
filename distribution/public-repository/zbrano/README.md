@@ -8,16 +8,12 @@ ZBRANO is a private Home Assistant intelligence assistant. It combines natural
 conversation, live home context, voice, useful memory, notifications, organization,
 and automation in one interface without granting itself access to every device.
 
+Version 0.13.252 fixes disabled-device precedence, isolates attachments, and requires approval for model-selected changes.
+
 Version 0.13.251 requires Home Assistant Ingress for browser access, blocks static-file
 traversal, and limits optional direct access to paired Assist requests. For Assist,
 enable Allow paired Assist connections and map port 8099 under Network if needed.
 
-Version 0.13.250 fixes Shared Files actions and refreshes its desktop and phone layout.
-Version 0.13.221 fixes stateless channel readiness and adds guided Telegram bot setup.
-Version 0.13.220 gives Notifications a clear, contained, responsive delivery workspace.
-Version 0.13.219 allows unconfigured lights, switches, and climate controls by default.
-Version 0.13.218 restores one-click GitHub account connection without requesting a manual PAT.
-Version 0.13.217 makes Light the fresh-install default while preserving saved theme choices.
 
 Version 0.13.214 adds an opt-in native conversation agent for Assist-compatible
 microphone satellites with local pairing and duplicate-request protection.

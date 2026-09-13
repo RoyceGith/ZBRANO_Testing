@@ -33,10 +33,10 @@ def load_frontend_source_function():
 
 class ModularDiagnosticsRegressionTests(unittest.TestCase):
     def test_release_markers_are_aligned(self):
-        self.assertIn('version: "0.13.251"', CONFIG)
-        self.assertIn('version="0.13.251"', MAIN)
-        self.assertIn("HUD 0.13.251", HTML)
-        self.assertEqual(MANIFEST["version"], "0.13.251")
+        self.assertIn('version: "0.13.252"', CONFIG)
+        self.assertIn('version="0.13.252"', MAIN)
+        self.assertIn("HUD 0.13.252", HTML)
+        self.assertEqual(MANIFEST["version"], "0.13.252")
 
     def test_health_and_entity_routes_import_extracted_policy_constants(self):
         import_block = MAIN[MAIN.index("from .services.entity_policy import ("):]
@@ -44,7 +44,7 @@ class ModularDiagnosticsRegressionTests(unittest.TestCase):
         for name in ("HA_READ_ENTITIES", "HA_CONTROL_ENTITIES", "SAFE_CONTROL_DOMAINS"):
             self.assertIn(name, import_block)
         self.assertIn('"ha_read_entity_count": len((await approved_ha_entities())', MAIN)
-        self.assertIn('sorted(set(read_entities) | HA_READ_ENTITIES)', MAIN)
+        self.assertIn('sorted(set(read_entities) | (HA_READ_ENTITIES - set(policy)))', MAIN)
 
     def test_diagnostics_read_all_referenced_frontend_controllers(self):
         source = load_frontend_source_function()()

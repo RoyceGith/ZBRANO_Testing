@@ -88,8 +88,8 @@ def save_entity_policy(policy: dict[str, dict[str, Any]]) -> None:
 
 def effective_entity_access(entity_id: str) -> str | None:
     record = load_entity_policy().get(entity_id)
-    if record and record.get("enabled"):
-        return str(record.get("access") or "")
+    if record is not None:
+        return str(record.get("access") or "") if record.get("enabled") else None
     if entity_id in HA_CONTROL_ENTITIES:
         return "low_risk_control_proposed"
     if entity_id in HA_READ_ENTITIES:

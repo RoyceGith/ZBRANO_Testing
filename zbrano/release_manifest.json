@@ -1,9 +1,9 @@
 {
-  "version": "0.13.251",
+  "version": "0.13.252",
   "project": "ZBRANO Workshop Assistant",
   "note": "Release and Change Log.md",
   "source": "RoyceGith/ZBRANO_Core main",
-  "summary": "Enforce Home Assistant Ingress access, restrict optional direct Assist to paired requests, and prevent static-file traversal.",
+  "summary": "Respect explicit device restrictions, isolate attachment data from commands, and require approval for model-selected local changes.",
   "history_backfill": [
     {
       "version": "0.13.0",
@@ -1008,18 +1008,23 @@
     {
       "version": "0.13.250",
       "summary": "Fix Shared Files upload and folder deletion and refresh the file browser layout."
+    },
+    {
+      "version": "0.13.251",
+      "summary": "Enforce Home Assistant Ingress access, restrict optional direct Assist to paired requests, and prevent static-file traversal."
     }
   ],
   "release_entry": {
     "features": [
-      "Optional paired Assist access with no default host port mapping."
+      "Exact-call approval for model-selected device, instruction, memory and organizer changes."
     ],
     "fixes": [
-      "Reject anonymous direct UI/API and forged forwarding headers.",
-      "Contain resolved static files inside the static directory."
+      "Disabled device policy overrides legacy add-on lists.",
+      "Attachments no longer enter command or approval parsing.",
+      "Task approval cannot authorize unrelated local actions."
     ],
     "validation": [
-      "Anonymous access, spoofing, token scope and rotation, OAuth state, traversal and WebSocket regression tests."
+      "Isolated approval, cancellation, continuation, streaming, attachment separation and device-policy regression tests."
     ]
   },
   "features": [

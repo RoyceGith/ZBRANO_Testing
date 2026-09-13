@@ -48,3 +48,21 @@ complete penetration test. Live router rules and prior exposure were not tested.
 If an older version was exposed to the internet, rotate stored provider credentials
 and review access history: updating prevents the identified access paths but cannot
 undo an earlier credential disclosure.
+
+## Content and action protection (v0.13.252)
+
+Explicit saved device policy takes precedence over legacy add-on lists. Turning
+Allow off revokes that device even if a legacy control list includes it.
+
+Attachments are passed separately as labelled untrusted model context. Their text
+never enters local command routing or approval parsing. Only the actual user
+message can approve a pending change. Email, files and tool results remain
+untrusted data; these controls do not promise that a model cannot be misled.
+
+Model-selected local mutations require approval of the stored proposed calls,
+including device control, persistent instructions, Fast Memory, contacts, calendar,
+birthdays, notification watches and automation preparation. Knowledge Memory task
+grants do not bypass these checks, and approval of one proposal does not authorize
+new calls during continuation. The device execution layer rechecks current access.
+Direct user device commands continue through the existing local permission checks.
+Gmail draft and remote plugin write approval policies remain in place.

@@ -1,5 +1,12 @@
 # Change log
 
+## 0.13.252
+
+- Respect disabled and read-only devices even when legacy configuration lists them.
+- Keep attached file content separate from user commands and approvals.
+- Require approval for model-selected local changes, including persistent instructions.
+- Preserve ordinary direct device commands and recheck permissions before execution.
+
 ## 0.13.251
 
 - Require Home Assistant Ingress for browser access and general API requests.

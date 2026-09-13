@@ -12,10 +12,10 @@ MANIFEST = json.loads((ROOT / "zbrano/release_manifest.json").read_text(encoding
 
 class InlineGithubComposerIconReleaseTests(unittest.TestCase):
     def test_release_is_aligned(self):
-        self.assertIn('version: "0.13.251"', CONFIG)
-        self.assertIn('version="0.13.251"', MAIN)
-        self.assertIn("HUD 0.13.251", INDEX)
-        self.assertEqual(MANIFEST["version"], "0.13.251")
+        self.assertIn('version: "0.13.252"', CONFIG)
+        self.assertIn('version="0.13.252"', MAIN)
+        self.assertIn("HUD 0.13.252", INDEX)
+        self.assertEqual(MANIFEST["version"], "0.13.252")
 
     def test_github_icon_has_no_runtime_asset_dependency(self):
         self.assertIn('endsWith("plugin-icons/github.svg")', CONTEXT)

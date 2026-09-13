@@ -1,9 +1,13 @@
-# ZBRANO v0.13.245
+# ZBRANO v0.13.251
 
 Automation Studio provides a graphical, step-by-step workflow for Home Assistant
 automations. Use Setup &amp; safety, When, Only if, Then, and optional Outcomes beside the
 interactive flow canvas. Natural-language creation, templates, drag-and-drop,
 saved automation compatibility, and the full Advanced editor remain available.
+
+Version 0.13.251 requires Home Assistant Ingress for browser access, blocks static-file
+traversal, and limits optional direct access to paired Assist requests. For Assist,
+enable Allow paired Assist connections and map port 8099 under Network if needed.
 
 Version 0.13.250 fixes Shared Files upload and folder deletion, adds an in-page
 delete confirmation, and refreshes the file browser for desktop and phone.

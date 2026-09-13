@@ -80,6 +80,12 @@ def main() -> None:
         raise RuntimeError("Ingress port must remain 8099")
     if "exec uvicorn app.main:app --host 0.0.0.0 --port 8099" not in run_script:
         raise RuntimeError("Runtime command does not match the declared ingress port")
+    if "--no-proxy-headers" not in run_script or " --proxy-headers" in run_script:
+        raise RuntimeError("Ingress authentication requires the real socket peer, not forwarded IP headers")
+    require(config, r"^  8099/tcp: null$", "unpublished default host port")
+    require(config, r"^  enable_direct_port: false$", "disabled default direct Assist access")
+    if 'export ZBRANO_ENABLE_DIRECT_ASSIST="$(bashio::config \'enable_direct_port\')"' not in run_script:
+        raise RuntimeError("Direct Assist access option must be enforced by the runtime")
 
     option_keys = yaml_section_keys(config, "options")
     schema_keys = yaml_section_keys(config, "schema")

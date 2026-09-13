@@ -57,8 +57,8 @@ configuration:
     name: Legacy control device IDs
     description: Compatibility field for older installations. Leave blank and choose Control devices from Device Access inside ZBRANO.
   enable_direct_port:
-    name: Allow direct browser access
-    description: Expose port 8099 in addition to the normal protected Home Assistant sidebar connection.
+    name: Allow paired Assist connections
+    description: Allow only Assist API requests authenticated with a pairing key. Browser access requires Home Assistant. Map port 8099 under Network only if your Assist connection needs it.
 
 network:
-  8099/tcp: Direct ZBRANO web interface
+  8099/tcp: Optional paired Assist API; no direct browser access

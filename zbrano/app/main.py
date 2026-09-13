@@ -773,9 +773,17 @@ ha_ws = HomeAssistantWebSocketClient(
 
 app = FastAPI(
     title="ZBRANO",
-    version="0.13.250",
+    version="0.13.251",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
+)
+
+from .services.request_security import RequestSecurityMiddleware
+
+app.add_middleware(
+    RequestSecurityMiddleware,
+    direct_assist_enabled=lambda: os.getenv("ZBRANO_ENABLE_DIRECT_ASSIST", "false").strip().lower() == "true",
+    valid_assist_token=valid_pairing_token,
 )
 
 
@@ -3004,7 +3012,7 @@ async def health() -> dict[str, Any]:
     configured_speech_provider = SPEECH_PROVIDER if SPEECH_PROVIDER in {"openai", "elevenlabs"} else "openai"
     return {
         "status": "ok",
-        "version": "0.13.250",
+        "version": "0.13.251",
         "home_assistant_configured": bool(SUPERVISOR_TOKEN),
         "workshop_memory_configured": True,
         "knowledge_memory_mode": "built_in",
@@ -6440,7 +6448,14 @@ async def chat(request: ChatRequest) -> dict[str, Any]:
 
 @app.get("/{path:path}", include_in_schema=False)
 async def frontend(path: str = "") -> FileResponse:
-    candidate = STATIC_DIR / path
+    if "\x00" in path:
+        raise HTTPException(status_code=404, detail="Not found")
+    root = STATIC_DIR.resolve()
+    try:
+        candidate = (root / path).resolve()
+        candidate.relative_to(root)
+    except (ValueError, OSError, RuntimeError):
+        raise HTTPException(status_code=404, detail="Not found")
     if path and candidate.is_file():
         return FileResponse(
             candidate,

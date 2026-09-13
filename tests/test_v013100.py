@@ -15,10 +15,10 @@ MANIFEST = json.loads((ROOT / "zbrano/release_manifest.json").read_text(encoding
 
 class DenseAutomationStageReleaseTests(unittest.TestCase):
     def test_release_markers_are_aligned(self):
-        self.assertIn('version: "0.13.250"', CONFIG)
-        self.assertIn('version="0.13.250"', MAIN)
-        self.assertIn("HUD 0.13.250", HTML)
-        self.assertEqual(MANIFEST["version"], "0.13.250")
+        self.assertIn('version: "0.13.251"', CONFIG)
+        self.assertIn('version="0.13.251"', MAIN)
+        self.assertIn("HUD 0.13.251", HTML)
+        self.assertEqual(MANIFEST["version"], "0.13.251")
 
     def test_more_than_two_cards_enable_dense_layout(self):
         self.assertIn('nodes.length>2?" is-dense":""', FLOW)
@@ -32,7 +32,7 @@ class DenseAutomationStageReleaseTests(unittest.TestCase):
         self.assertIn('["OR", "AND"]', BROWSER)
 
     def test_release_history_includes_v01399(self):
-        self.assertEqual(MANIFEST["history_backfill"][-1]["version"], "0.13.249")
+        self.assertEqual(MANIFEST["history_backfill"][-1]["version"], "0.13.250")
 
 
 if __name__ == "__main__":

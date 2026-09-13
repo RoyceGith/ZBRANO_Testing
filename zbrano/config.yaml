@@ -1,6 +1,6 @@
 name: "ZBRANO"
 description: "Private AI conversation, home intelligence, and visual automation with explicit device permissions"
-version: "0.13.250"
+version: "0.13.251"
 slug: "zbrano"
 image: "ghcr.io/roycegith/zbrano-core"
 init: false
@@ -19,9 +19,9 @@ panel_title: "ZBRANO"
 panel_admin: true
 
 ports:
-  8099/tcp: 8099
+  8099/tcp: null
 ports_description:
-  8099/tcp: "Direct ZBRANO web interface"
+  8099/tcp: "Optional paired Assist API only; no direct browser access"
 
 options:
   log_level: "info"
@@ -43,7 +43,7 @@ options:
   speech_fallback_to_openai: true
   ha_read_entities: ""
   ha_control_entities: ""
-  enable_direct_port: true
+  enable_direct_port: false
 
 schema:
   log_level: "list(trace|debug|info|warning|error)"

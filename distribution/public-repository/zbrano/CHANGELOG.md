@@ -1,5 +1,13 @@
 # Change log
 
+## 0.13.251
+
+- Require Home Assistant Ingress for browser access and general API requests.
+- Block static-file traversal and forwarded-header impersonation.
+- Disable the default host port; optional direct Assist requires a pairing key.
+- For Assist, enable Allow paired Assist connections and map port 8099 only if needed.
+- Start plugin connections through Home Assistant and use the displayed Ingress callback URL.
+
 ## 0.13.250
 
 - Fix folder navigation intercepting upload and delete-folder clicks.

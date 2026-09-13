@@ -16,16 +16,16 @@ MANIFEST = json.loads((ROOT / "zbrano/release_manifest.json").read_text(encoding
 
 class IntegrationTestFoundationTests(unittest.TestCase):
     def test_release_markers_are_aligned(self):
-        self.assertIn('version: "0.13.250"', CONFIG)
-        self.assertIn('version="0.13.250"', MAIN)
-        self.assertIn("HUD 0.13.250", HTML)
-        self.assertEqual(MANIFEST["version"], "0.13.250")
+        self.assertIn('version: "0.13.251"', CONFIG)
+        self.assertIn('version="0.13.251"', MAIN)
+        self.assertIn("HUD 0.13.251", HTML)
+        self.assertEqual(MANIFEST["version"], "0.13.251")
 
     def test_image_build_runs_real_application_integration_suite(self):
         self.assertIn("COPY tests ./tests", DOCKERFILE)
         self.assertIn('python3 -m unittest discover -s ./tests -p "test_*.py"', DOCKERFILE)
         self.assertIn("from app import main", INTEGRATION)
-        self.assertIn("httpx.ASGITransport(app=main.app)", INTEGRATION)
+        self.assertIn('httpx.ASGITransport(app=main.app, client=("172.30.32.2", 12345))', INTEGRATION)
 
     def test_integration_boundaries_are_isolated_and_critical(self):
         for marker in (

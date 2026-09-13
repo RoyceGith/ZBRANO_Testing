@@ -26,6 +26,7 @@ export ELEVENLABS_MODEL_ID="$(bashio::config 'elevenlabs_model_id')"
 export SPEECH_FALLBACK_TO_OPENAI="$(bashio::config 'speech_fallback_to_openai')"
 export HA_READ_ENTITIES="$(bashio::config 'ha_read_entities')"
 export HA_CONTROL_ENTITIES="$(bashio::config 'ha_control_entities')"
+export ZBRANO_ENABLE_DIRECT_ASSIST="$(bashio::config 'enable_direct_port')"
 
 bashio::log.info "Starting ZBRANO..."
-exec uvicorn app.main:app --host 0.0.0.0 --port 8099 --proxy-headers
+exec uvicorn app.main:app --host 0.0.0.0 --port 8099 --no-proxy-headers

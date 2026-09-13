@@ -57,7 +57,7 @@ configuration:
     name: "Anciens ID d’appareils contrôlables"
     description: "Champ de compatibilité pour les anciennes installations. Laissez-le vide et choisissez les Appareils contrôlables dans Accès aux appareils dans ZBRANO."
   enable_direct_port:
-    name: "Autoriser l’accès direct par navigateur"
-    description: "Expose le port 8099 en plus de la connexion protégée normale depuis la barre latérale Home Assistant."
+    name: "Autoriser les connexions Assist appairées"
+    description: "Autorise uniquement les requêtes API Assist avec une clé d’appairage. L’accès par navigateur nécessite Home Assistant. Configurez le port 8099 dans Réseau uniquement si votre connexion Assist en a besoin."
 network:
-  8099/tcp: "Interface web directe ZBRANO"
+  8099/tcp: "API Assist appairée facultative, sans accès direct par navigateur"

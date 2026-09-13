@@ -24,11 +24,11 @@ def png_metadata(path: Path) -> tuple[int, int, int]:
 
 class PublicPresentationAssetsReleaseTests(unittest.TestCase):
     def test_release_is_aligned(self):
-        self.assertIn('version: "0.13.250"', CONFIG)
-        self.assertIn('version="0.13.250"', MAIN)
-        self.assertIn("HUD 0.13.250", HTML)
-        self.assertEqual(MANIFEST["version"], "0.13.250")
-        self.assertEqual(MANIFEST["history_backfill"][-1]["version"], "0.13.249")
+        self.assertIn('version: "0.13.251"', CONFIG)
+        self.assertIn('version="0.13.251"', MAIN)
+        self.assertIn("HUD 0.13.251", HTML)
+        self.assertEqual(MANIFEST["version"], "0.13.251")
+        self.assertEqual(MANIFEST["history_backfill"][-1]["version"], "0.13.250")
 
     def test_home_assistant_icon_is_bounded_transparent_png(self):
         path = ROOT / "zbrano/icon.png"

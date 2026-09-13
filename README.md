@@ -1,9 +1,13 @@
-## ZBRANO v0.13.250
+## ZBRANO v0.13.251
 
 ZBRANO combines Home Assistant chat, voice, entity control, memory, notifications,
 calendar and contact tools, plugins, and evidence-based automations. Automation Studio now uses
 a visual building-block toolbox, interactive node canvas, and contextual inspector;
 the established automation engine and stored definitions remain compatible.
+
+Version 0.13.251 blocks unauthenticated direct access and static-file traversal.
+Open ZBRANO through Home Assistant. Optional direct Assist requires a pairing key.
+See [access security and Assist setup](docs/SECURITY_BOUNDARY.md).
 
 Version 0.13.250 fixes Shared Files upload and folder deletion, adds an in-page
 delete confirmation, and refreshes the file browser for desktop and phone.

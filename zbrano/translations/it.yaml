@@ -57,7 +57,7 @@ configuration:
     name: "ID legacy dei dispositivi di controllo"
     description: "Campo di compatibilità per installazioni precedenti. Lascialo vuoto e scegli i Dispositivi di controllo da Accesso ai dispositivi in ZBRANO."
   enable_direct_port:
-    name: "Consenti accesso diretto dal browser"
-    description: "Espone la porta 8099 oltre alla normale connessione protetta dalla barra laterale di Home Assistant."
+    name: "Consenti connessioni Assist abbinate"
+    description: "Consente solo richieste API Assist con una chiave di abbinamento. L’accesso dal browser richiede Home Assistant. Configura la porta 8099 in Rete solo se necessaria per la connessione Assist."
 network:
-  8099/tcp: "Interfaccia web diretta di ZBRANO"
+  8099/tcp: "API Assist abbinata facoltativa, senza accesso diretto dal browser"

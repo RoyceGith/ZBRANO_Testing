@@ -1,9 +1,9 @@
 {
-  "version": "0.13.250",
+  "version": "0.13.251",
   "project": "ZBRANO Workshop Assistant",
   "note": "Release and Change Log.md",
   "source": "RoyceGith/ZBRANO_Core main",
-  "summary": "Fix Shared Files upload and folder deletion and refresh the file browser layout.",
+  "summary": "Enforce Home Assistant Ingress access, restrict optional direct Assist to paired requests, and prevent static-file traversal.",
   "history_backfill": [
     {
       "version": "0.13.0",
@@ -701,218 +701,218 @@
       "version": "0.13.173",
       "summary": "Added a guided Home Assistant AI configuration sequence with restart and verification handoff."
     },
-      {
-        "version": "0.13.174",
-        "summary": "Added safe Sensor, Control, and All entity permission views with live installation counts."
-      },
-      {
-        "version": "0.13.175",
-        "summary": "Required explicit per-entity consent and stopped inventory discovery from granting access automatically."
-      },
-      {
-        "version": "0.13.176",
-        "summary": "Replaced internal permission names with Sensor device, Control device, and Do not allow choices."
-      },
-      {
-        "version": "0.13.177",
-        "summary": "Kept permission checkboxes, access choices, saved records, summaries, and exports consistent."
-      },
-      {
-        "version": "0.13.178",
-        "summary": "Made Entity Inventory permission-first while preserving advanced columns and custom layouts."
-      },
-      {
-        "version": "0.13.179",
-        "summary": "Aligned onboarding and installation reporting with Sensor device and Control device access."
-      },
-      {
-        "version": "0.13.180",
-        "summary": "Added dedicated plain-language Home Assistant connection recovery to guided Setup."
-      },
-      {
-        "version": "0.13.181",
-        "summary": "Added friendly Home Assistant configuration labels and validation for the thin public package."
-      },
-      {
-        "version": "0.13.182",
-        "summary": "Added a polished top-level About showcase with organized capabilities and direct product actions."
-      },
-      {
-        "version": "0.13.183",
-        "summary": "Replaced public release-diary pages with concise product, installation, permission, privacy, and support guides."
-      },
-      {
-        "version": "0.13.184",
-        "summary": "Added a validated ZBRANO icon and transparent wordmark to the Home Assistant store and public guides."
-      },
-      {
-        "version": "0.13.185",
-        "summary": "Added amd64 beside aarch64 and published both behind the existing generic Home Assistant image manifest."
-      },
-      {
-        "version": "0.13.186",
-        "summary": "Added English, Greek, Italian, and French interface foundations, automatic language detection, voice locales, and Home Assistant configuration translations."
-      },
-      {
-        "version": "0.13.187",
-        "summary": "Expanded four-language coverage across primary and advanced workspaces with build-gated catalog validation."
-      },
-      {
-        "version": "0.13.188",
-        "summary": "Added a top-right flag selector for interface-only language selection and decoupled conversation and voice behavior."
-      },
-      {
-        "version": "0.13.189",
-        "summary": "Routed clear Home Assistant on/off commands locally, preferred approved Control Devices over matching sensors, and avoided duplicate service actions."
-      },
-      {
-        "version": "0.13.190",
-        "summary": "Resolved air-conditioner power commands to the actual climate entity instead of similarly named status, temperature, or mode helpers."
-      },
-      {
-        "version": "0.13.191",
-        "summary": "Made browser wake recognition the universal recommended choice while preserving and accurately labelling the owner-tuned local model as experimental."
-      },
-      {
-        "version": "0.13.192",
-        "summary": "Added bring-your-own AI through direct OpenAI or a user-owned OpenRouter account without creating a ZBRANO-managed AI service."
-      },
-      {
-        "version": "0.13.193",
-        "summary": "Replaced the external Workshop Memory dependency with built-in, customizable Knowledge Memory that stays local to each ZBRANO installation."
-      },
-      {
-        "version": "0.13.194",
-        "summary": "Added a friendly Memory Studio with a local Memory Database, custom categories, reusable templates, and guided note management."
-      },
-      {
-        "version": "0.13.195",
-        "summary": "Made Memory Studio categories and organizational layouts distinct, relevant, and immediately understandable."
-      },
-      {
-        "version": "0.13.196",
-        "summary": "Restored reliable vertical scrolling throughout Memory Database and Template Studio on desktop and compact screens."
-      },
-      {
-        "version": "0.13.197",
-        "summary": "Made Memory effortless for everyday users with one-step capture and automatic local organization."
-      },
-      {
-        "version": "0.13.198",
-        "summary": "Kept optional remote MCP failures from breaking ordinary chat by loading connectors only when explicitly requested."
-      },
-      {
-        "version": "0.13.199",
-        "summary": "Gave automatic Knowledge Memory writes the clear Save to Memory Database name in chat and approvals."
-      },
-      {
-        "version": "0.13.200",
-        "summary": "Preserved formatted partial answers and chat history when users stop a streamed response."
-      },
-      {
-        "version": "0.13.201",
-        "summary": "Completed explicitly requested Memory Database saves without redundant approvals and announced bounded phases for large saves."
-      },
-      {
-        "version": "0.13.202",
-        "summary": "Deleted the final saved conversation cleanly and left exactly one fresh unsaved chat."
-      },
-      {
-        "version": "0.13.203",
-        "summary": "Organized saved knowledge into descriptive topic collections with one safe append-or-create choice."
-      },
-      {
-        "version": "0.13.204",
-        "summary": "Suggested useful collections before saving and made My Memory a focused, editable, printable notes workspace."
-      },
-      {
-        "version": "0.13.205",
-        "summary": "Opened memory notes immediately, kept category navigation visible, and expanded the usable editor space."
-      },
-      {
-        "version": "0.13.206",
-        "summary": "Removed the excessive gap between a memory note title and its content editor."
-      },
-      {
-        "version": "0.13.207",
-        "summary": "Used the memory space name as a compact, undecorated print heading."
-      },
-      {
-        "version": "0.13.208",
-        "summary": "Displayed memory notes with chat-style Markdown formatting and visible last-updated dates."
-      },
-      {
-        "version": "0.13.209",
-        "summary": "Compacted the My Memory landing page and moved saved spaces into the upper portion of the view."
-      },
-      {
-        "version": "0.13.210",
-        "summary": "Added safe folder organization, navigation, uploads, and file moving to Shared Files."
-      },
-      {
-        "version": "0.13.211",
-        "summary": "Polished Shared Files into a refined, modern private-library workspace."
-      },
-      {
-        "version": "0.13.212",
-        "summary": "Updated About into a polished eight-part showcase of ZBRANO's current capabilities."
-      },
-      {
-        "version": "0.13.213",
-        "summary": "Preserved clean Markdown structure and upgraded older list-wrapped automatic memory entries."
-      },
-      {
-        "version": "0.13.214",
-        "summary": "Connected Home Assistant Assist microphone satellites through an opt-in native ZBRANO conversation agent."
-      },
-      {
-        "version": "0.13.215",
-        "summary": "Removed Developer Mode from customer builds while retaining safe installation reporting."
-      },
-      {
-        "version": "0.13.216",
-        "summary": "Completed the ZBRANO identity migration and removed Playwright from the customer runtime."
-      },
-      {
-        "version": "0.13.217",
-        "summary": "Made Light the default interface theme for fresh installations while preserving saved theme choices."
-      },
-      {
-        "version": "0.13.218",
-        "summary": "Restored one-click GitHub account connection in the Plugins catalog."
-      },
-      {
-        "version": "0.13.219",
-        "summary": "Allowed ordinary Home Assistant controls by default while preserving explicit entity choices."
-      },
-      {
-        "version": "0.13.220",
-        "summary": "Reorganized Notifications into a contained, responsive delivery workspace."
-      },
-      {
-        "version": "0.13.221",
-        "summary": "Corrected notification endpoint readiness and added guided Telegram bot setup."
-      },
-      {
-        "version": "0.13.222",
-        "summary": "Moved Notifications into Settings and replaced nested workspace tabs with clear side navigation."
-      },
-      {
-        "version": "0.13.223",
-        "summary": "Completed explicitly requested Memory Database saves without repeated approval prompts."
-      },
-      {
-        "version": "0.13.224",
-        "summary": "Replaced crowded chat composer settings with compact AI, voice, and plugin controls."
-      },
-      {
-        "version": "0.13.225",
-        "summary": "Kept every installed plugin visible beneath the chat prompt."
-      },
-      {
-        "version": "0.13.226",
-        "summary": "Hardened plugin icon loading, fallbacks, and theme contrast beneath chat."
-      },
+    {
+      "version": "0.13.174",
+      "summary": "Added safe Sensor, Control, and All entity permission views with live installation counts."
+    },
+    {
+      "version": "0.13.175",
+      "summary": "Required explicit per-entity consent and stopped inventory discovery from granting access automatically."
+    },
+    {
+      "version": "0.13.176",
+      "summary": "Replaced internal permission names with Sensor device, Control device, and Do not allow choices."
+    },
+    {
+      "version": "0.13.177",
+      "summary": "Kept permission checkboxes, access choices, saved records, summaries, and exports consistent."
+    },
+    {
+      "version": "0.13.178",
+      "summary": "Made Entity Inventory permission-first while preserving advanced columns and custom layouts."
+    },
+    {
+      "version": "0.13.179",
+      "summary": "Aligned onboarding and installation reporting with Sensor device and Control device access."
+    },
+    {
+      "version": "0.13.180",
+      "summary": "Added dedicated plain-language Home Assistant connection recovery to guided Setup."
+    },
+    {
+      "version": "0.13.181",
+      "summary": "Added friendly Home Assistant configuration labels and validation for the thin public package."
+    },
+    {
+      "version": "0.13.182",
+      "summary": "Added a polished top-level About showcase with organized capabilities and direct product actions."
+    },
+    {
+      "version": "0.13.183",
+      "summary": "Replaced public release-diary pages with concise product, installation, permission, privacy, and support guides."
+    },
+    {
+      "version": "0.13.184",
+      "summary": "Added a validated ZBRANO icon and transparent wordmark to the Home Assistant store and public guides."
+    },
+    {
+      "version": "0.13.185",
+      "summary": "Added amd64 beside aarch64 and published both behind the existing generic Home Assistant image manifest."
+    },
+    {
+      "version": "0.13.186",
+      "summary": "Added English, Greek, Italian, and French interface foundations, automatic language detection, voice locales, and Home Assistant configuration translations."
+    },
+    {
+      "version": "0.13.187",
+      "summary": "Expanded four-language coverage across primary and advanced workspaces with build-gated catalog validation."
+    },
+    {
+      "version": "0.13.188",
+      "summary": "Added a top-right flag selector for interface-only language selection and decoupled conversation and voice behavior."
+    },
+    {
+      "version": "0.13.189",
+      "summary": "Routed clear Home Assistant on/off commands locally, preferred approved Control Devices over matching sensors, and avoided duplicate service actions."
+    },
+    {
+      "version": "0.13.190",
+      "summary": "Resolved air-conditioner power commands to the actual climate entity instead of similarly named status, temperature, or mode helpers."
+    },
+    {
+      "version": "0.13.191",
+      "summary": "Made browser wake recognition the universal recommended choice while preserving and accurately labelling the owner-tuned local model as experimental."
+    },
+    {
+      "version": "0.13.192",
+      "summary": "Added bring-your-own AI through direct OpenAI or a user-owned OpenRouter account without creating a ZBRANO-managed AI service."
+    },
+    {
+      "version": "0.13.193",
+      "summary": "Replaced the external Workshop Memory dependency with built-in, customizable Knowledge Memory that stays local to each ZBRANO installation."
+    },
+    {
+      "version": "0.13.194",
+      "summary": "Added a friendly Memory Studio with a local Memory Database, custom categories, reusable templates, and guided note management."
+    },
+    {
+      "version": "0.13.195",
+      "summary": "Made Memory Studio categories and organizational layouts distinct, relevant, and immediately understandable."
+    },
+    {
+      "version": "0.13.196",
+      "summary": "Restored reliable vertical scrolling throughout Memory Database and Template Studio on desktop and compact screens."
+    },
+    {
+      "version": "0.13.197",
+      "summary": "Made Memory effortless for everyday users with one-step capture and automatic local organization."
+    },
+    {
+      "version": "0.13.198",
+      "summary": "Kept optional remote MCP failures from breaking ordinary chat by loading connectors only when explicitly requested."
+    },
+    {
+      "version": "0.13.199",
+      "summary": "Gave automatic Knowledge Memory writes the clear Save to Memory Database name in chat and approvals."
+    },
+    {
+      "version": "0.13.200",
+      "summary": "Preserved formatted partial answers and chat history when users stop a streamed response."
+    },
+    {
+      "version": "0.13.201",
+      "summary": "Completed explicitly requested Memory Database saves without redundant approvals and announced bounded phases for large saves."
+    },
+    {
+      "version": "0.13.202",
+      "summary": "Deleted the final saved conversation cleanly and left exactly one fresh unsaved chat."
+    },
+    {
+      "version": "0.13.203",
+      "summary": "Organized saved knowledge into descriptive topic collections with one safe append-or-create choice."
+    },
+    {
+      "version": "0.13.204",
+      "summary": "Suggested useful collections before saving and made My Memory a focused, editable, printable notes workspace."
+    },
+    {
+      "version": "0.13.205",
+      "summary": "Opened memory notes immediately, kept category navigation visible, and expanded the usable editor space."
+    },
+    {
+      "version": "0.13.206",
+      "summary": "Removed the excessive gap between a memory note title and its content editor."
+    },
+    {
+      "version": "0.13.207",
+      "summary": "Used the memory space name as a compact, undecorated print heading."
+    },
+    {
+      "version": "0.13.208",
+      "summary": "Displayed memory notes with chat-style Markdown formatting and visible last-updated dates."
+    },
+    {
+      "version": "0.13.209",
+      "summary": "Compacted the My Memory landing page and moved saved spaces into the upper portion of the view."
+    },
+    {
+      "version": "0.13.210",
+      "summary": "Added safe folder organization, navigation, uploads, and file moving to Shared Files."
+    },
+    {
+      "version": "0.13.211",
+      "summary": "Polished Shared Files into a refined, modern private-library workspace."
+    },
+    {
+      "version": "0.13.212",
+      "summary": "Updated About into a polished eight-part showcase of ZBRANO's current capabilities."
+    },
+    {
+      "version": "0.13.213",
+      "summary": "Preserved clean Markdown structure and upgraded older list-wrapped automatic memory entries."
+    },
+    {
+      "version": "0.13.214",
+      "summary": "Connected Home Assistant Assist microphone satellites through an opt-in native ZBRANO conversation agent."
+    },
+    {
+      "version": "0.13.215",
+      "summary": "Removed Developer Mode from customer builds while retaining safe installation reporting."
+    },
+    {
+      "version": "0.13.216",
+      "summary": "Completed the ZBRANO identity migration and removed Playwright from the customer runtime."
+    },
+    {
+      "version": "0.13.217",
+      "summary": "Made Light the default interface theme for fresh installations while preserving saved theme choices."
+    },
+    {
+      "version": "0.13.218",
+      "summary": "Restored one-click GitHub account connection in the Plugins catalog."
+    },
+    {
+      "version": "0.13.219",
+      "summary": "Allowed ordinary Home Assistant controls by default while preserving explicit entity choices."
+    },
+    {
+      "version": "0.13.220",
+      "summary": "Reorganized Notifications into a contained, responsive delivery workspace."
+    },
+    {
+      "version": "0.13.221",
+      "summary": "Corrected notification endpoint readiness and added guided Telegram bot setup."
+    },
+    {
+      "version": "0.13.222",
+      "summary": "Moved Notifications into Settings and replaced nested workspace tabs with clear side navigation."
+    },
+    {
+      "version": "0.13.223",
+      "summary": "Completed explicitly requested Memory Database saves without repeated approval prompts."
+    },
+    {
+      "version": "0.13.224",
+      "summary": "Replaced crowded chat composer settings with compact AI, voice, and plugin controls."
+    },
+    {
+      "version": "0.13.225",
+      "summary": "Kept every installed plugin visible beneath the chat prompt."
+    },
+    {
+      "version": "0.13.226",
+      "summary": "Hardened plugin icon loading, fallbacks, and theme contrast beneath chat."
+    },
     {
       "version": "0.13.227",
       "summary": "Render the GitHub composer mark inline without a runtime asset dependency."
@@ -1004,18 +1004,22 @@
     {
       "version": "0.13.249",
       "summary": "Add complete GitHub and Gmail Direct setup guides with persistent links and installation-specific callback help."
+    },
+    {
+      "version": "0.13.250",
+      "summary": "Fix Shared Files upload and folder deletion and refresh the file browser layout."
     }
   ],
   "release_entry": {
     "features": [
-      "Modern responsive Shared Files layout and in-page folder confirmation."
+      "Optional paired Assist access with no default host port mapping."
     ],
     "fixes": [
-      "Restrict folder navigation to actual buttons so upload and deletion work.",
-      "Preserve upload destinations and allow retry after failure."
+      "Reject anonymous direct UI/API and forged forwarding headers.",
+      "Contain resolved static files inside the static directory."
     ],
     "validation": [
-      "Browser native upload, retry, folder cancellation/deletion/error checks; regression and integration suites; release validators."
+      "Anonymous access, spoofing, token scope and rotation, OAuth state, traversal and WebSocket regression tests."
     ]
   },
   "features": [

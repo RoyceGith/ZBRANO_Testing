@@ -24,7 +24,7 @@ FEATURED_REMOTE_PLUGINS = [
         "description": "Official GitHub MCP server for repositories, code, issues, pull requests, users, and workflows.",
         "url": "https://api.githubcopilot.com/mcp/", "category": "developer-tools", "verified": True,
         "auth_required": True, "auth_mode": "github-oauth", "installable": True, "publisher": "GitHub",
-        "icon_url": "plugin-icons/github.svg", "docs_url": "https://docs.github.com/en/copilot/customizing-copilot/extending-copilot-chat-with-mcp",
+        "icon_url": "plugin-icons/github.svg", "docs_url": "plugin-setup.html#github",
     },
     {
         "id": "gmail-official", "name": "zbrano.gmail-direct", "title": "Gmail Direct",
@@ -32,7 +32,7 @@ FEATURED_REMOTE_PLUGINS = [
         "url": "https://gmailmcp.googleapis.com/mcp/v1", "category": "productivity", "verified": True,
         "auth_required": True, "auth_mode": "oauth", "installable": False, "oauth_connectable": True, "publisher": "ZBRANO + Google Gmail API",
         "setup_label": "Connect with Google", "availability": "Standard Gmail API",
-        "icon_url": "plugin-icons/gmail.svg", "docs_url": "https://developers.google.com/workspace/gmail/api/guides/configure-mcp-server",
+        "icon_url": "plugin-icons/gmail.svg", "docs_url": "plugin-setup.html#gmail",
     },
     {
         "id": "google-drive-official", "name": "com.google.workspace/drive", "title": "Google Drive",

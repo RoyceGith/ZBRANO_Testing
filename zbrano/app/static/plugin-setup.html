@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plugin setup guides · ZBRANO</title>
+<style>
+:root{color-scheme:light dark;font:16px/1.65 system-ui,sans-serif;background:#f6f9fb;color:#172c36}body{max-width:850px;margin:auto;padding:24px}a{color:#006c86}nav{display:flex;gap:20px;flex-wrap:wrap}h1,h2,h3{line-height:1.25}h2{margin-top:2.5rem}li{margin:.7rem 0}section{scroll-margin-top:20px}code{overflow-wrap:anywhere}input{box-sizing:border-box;width:100%;padding:12px;font:inherit}button{font:inherit;padding:10px 16px;cursor:pointer;margin-top:8px}details{border-top:1px solid #bdcdd5;padding:14px 0}summary{cursor:pointer;font-weight:600}aside{border-left:3px solid #0086a3;padding:8px 18px;background:#eaf3f7}footer{margin-top:3rem;font-size:.9rem}a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid #0086a3;outline-offset:4px}@media(prefers-color-scheme:dark){:root{background:#101b22;color:#e4eef4}a{color:#61d8ef}aside{background:#182c36}}@media(max-width:500px){body{padding:16px}ol{padding-left:24px}}
+</style>
+</head>
+<body>
+<nav aria-label="Setup guides"><a href="./">Back to ZBRANO</a><a href="#github">GitHub</a><a href="#gmail">Gmail Direct</a></nav>
+<h1>Connect your plugins</h1>
+<p>Step-by-step setup for your own ZBRANO installation. Keep this guide open in a separate tab while you configure the provider. Reviewed September 2026.</p>
+<section id="github" aria-labelledby="github-title">
+<h2 id="github-title">GitHub</h2>
+<p>You need a GitHub account and access to ZBRANO’s Home Assistant add-on configuration. ZBRANO uses device-code authorization with an OAuth App. The normal connection needs a Client ID; no client secret or manually created token is entered.</p>
+<h3>1. Register your OAuth App</h3>
+<ol>
+<li>Sign in to the GitHub account that will own the app. Open <a href="https://github.com/settings/applications/new" target="_blank" rel="noopener noreferrer">Register a new OAuth application</a> (Settings → Developer settings → OAuth Apps → New OAuth App).</li>
+<li>Use a recognizable name, such as <strong>ZBRANO Home</strong>. Set the homepage to your Home Assistant web address. GitHub also asks for an authorization callback URL: use your Home Assistant web address there. ZBRANO’s device flow does not redirect to that field.</li>
+<li>Register the application. In its settings, enable <strong>Device Flow</strong> and save. Copy the <strong>Client ID</strong>, not the app name or a client secret.</li>
+</ol>
+<p><a href="https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/creating-an-oauth-app" target="_blank" rel="noopener noreferrer">GitHub: registering an OAuth App</a> · <a href="https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow" target="_blank" rel="noopener noreferrer">GitHub: device authorization</a></p>
+<h3>2. Configure ZBRANO</h3>
+<ol>
+<li>In Home Assistant, open <strong>Settings → Add-ons → ZBRANO → Configuration</strong>. Enable optional configuration fields if they are hidden.</li>
+<li>Paste the Client ID into <code>github_oauth_client_id</code>. Save, restart the ZBRANO add-on, and reopen ZBRANO.</li>
+<li>Open <strong>Plugins → Catalog</strong>, find GitHub, and choose <strong>Connect with GitHub</strong>.</li>
+</ol>
+<h3>3. Authorize and check the connection</h3>
+<ol>
+<li>Allow the sign-in popup. Copy the code shown by ZBRANO and enter it on GitHub’s device authorization page. Check the signed-in account before authorizing.</li>
+<li>Review the requested access. This connector requests <code>repo</code> and <code>read:org</code>, which include repository access and organization information. Your organization may require its own approval.</li>
+<li>Return to ZBRANO and leave it open while sign-in finishes. In <strong>Plugins → Installed</strong>, review the tools and enable the plugin if it is disabled. Check that it is healthy and available to chat.</li>
+<li>Try a read-only request: <strong>“List my GitHub repositories.”</strong> Verify that the results belong to the intended account.</li>
+</ol>
+<h3>GitHub troubleshooting</h3>
+<details><summary>“GitHub sign-in setup required” or invalid Client ID</summary><p>Check that the saved value is the Client ID from the OAuth App you created. Save and restart the add-on, then refresh the catalog.</p></details>
+<details><summary>Device flow disabled, expired code, or blocked popup</summary><p>Enable Device Flow in that same app. Allow popups for Home Assistant. Start Connect with GitHub again to get a fresh code; do not reuse an expired code.</p></details>
+<details><summary>Wrong account or missing organization repositories</summary><p>Use the intended account on GitHub’s authorization page. For a clean retry, remove the GitHub plugin in ZBRANO and connect again. Organization policies or SSO can restrict access; ask the organization administrator to approve the app where needed. Review authorizations in <a href="https://github.com/settings/applications" target="_blank" rel="noopener noreferrer">GitHub application settings</a>.</p></details>
+<details><summary>Connection later stops working</summary><p>Check the installed plugin’s error and refresh it. If authorization has expired or been revoked, reconnect. ZBRANO’s current GitHub device connector stores the access token and does not implement GitHub refresh-token rotation.</p></details>
+</section>
+<section id="gmail" aria-labelledby="gmail-title">
+<h2 id="gmail-title">Gmail Direct</h2>
+<p>This is ZBRANO’s built-in connection to the standard Gmail API. It can search and read messages, list labels, and create unsent drafts after approval. It does not provide sending or deletion tools. No Workspace MCP developer-preview enrollment is needed.</p>
+<h3>1. Choose your Cloud project and enable Gmail</h3>
+<ol>
+<li>Open <a href="https://console.cloud.google.com/" target="_blank" rel="noopener noreferrer">Google Cloud Console</a>. Use the profile menu to select the account that owns your project. In the top project selector, create a project or select your existing one.</li>
+<li>In that project, open <a href="https://console.cloud.google.com/apis/library/gmail.googleapis.com" target="_blank" rel="noopener noreferrer">Gmail API</a> and click <strong>Enable</strong>.</li>
+</ol>
+<h3>2. Set up Google’s consent screen</h3>
+<ol>
+<li>Open <a href="https://console.cloud.google.com/auth/overview" target="_blank" rel="noopener noreferrer">Google Auth Platform</a>. Complete Get started if shown: choose an app name you recognize, support email, and contact email.</li>
+<li>In <strong>Audience</strong>, choose <strong>External</strong> for personal Gmail accounts. Internal is only for accounts in the relevant Workspace organization.</li>
+<li>For personal testing, leave the app in <strong>Testing</strong> and add the exact Gmail address you want to connect under <strong>Test users</strong>. Project ownership alone does not replace this step.</li>
+<li>Under <strong>Data Access → Add or remove scopes</strong>, add <code>https://www.googleapis.com/auth/gmail.readonly</code> and <code>https://www.googleapis.com/auth/gmail.compose</code>, then save. Google’s compose permission also covers sending; ZBRANO exposes only draft creation and requires approval for it.</li>
+</ol>
+<p><a href="https://developers.google.com/workspace/gmail/api/quickstart/js" target="_blank" rel="noopener noreferrer">Google: project and Gmail API setup</a> · <a href="https://support.google.com/cloud/answer/15549945" target="_blank" rel="noopener noreferrer">Google: audience and test users</a></p>
+<h3>3. Copy this installation’s callback URL</h3>
+<p>Open ZBRANO through the Home Assistant address you intend to use for connection, then open this guide from its plugin card. Copy the entire address below.</p>
+<label for="callback"><strong>Authorized redirect URI for this installation</strong></label>
+<input id="callback" readonly spellcheck="false"><button id="copy-callback" type="button">Copy callback URL</button><p id="copy-status" role="status"></p>
+<noscript><p>Enable JavaScript to display the callback, or use Copy callback URL on Gmail Direct’s catalog card.</p></noscript>
+<aside>Home Assistant Ingress adds a path to this address. Keep the full path. Changing the Home Assistant address or reinstalling the add-on can change the callback; copy it again when reconnecting.</aside>
+<h3>4. Create the OAuth client</h3>
+<ol>
+<li>Open <a href="https://console.cloud.google.com/auth/clients" target="_blank" rel="noopener noreferrer">Google Auth Platform → Clients</a> in the same project. Create a client with application type <strong>Web application</strong>.</li>
+<li>Under <strong>Authorized redirect URIs</strong>, add the exact callback copied above. This goes in redirect URIs, not JavaScript origins. Create/save the client.</li>
+<li>Copy its <strong>Client ID</strong> and <strong>Client secret</strong>. In Home Assistant → Settings → Add-ons → ZBRANO → Configuration, enter them in <code>google_oauth_client_id</code> and <code>google_oauth_client_secret</code>. Save and restart the add-on. Keep the secret in configuration, not chat.</li>
+</ol>
+<h3>5. Connect the intended Gmail account</h3>
+<ol>
+<li>Reopen ZBRANO at the same Home Assistant address. Open <strong>Plugins → Catalog → Gmail Direct → Connect with Google</strong>.</li>
+<li>Select the Gmail account you added as a test user. The account owning the Cloud project can be different: the Client ID identifies the project; the account you authorize identifies the mailbox.</li>
+<li>Review the app name and permissions and approve the connection. A testing app can show an unverified-app notice; continue only if it is your own expected app. Organization restrictions may require administrator approval.</li>
+<li>Return to <strong>Plugins → Installed</strong>. Check the reported OAuth account and enabled tools. Try <strong>“List my Gmail labels”</strong> to confirm access, then <strong>“Show my five latest emails.”</strong></li>
+</ol>
+<h3>Gmail troubleshooting</h3>
+<details><summary>Error 400: redirect_uri_mismatch</summary><p>Click error details in Google’s window and compare its redirect_uri with your client’s Authorized redirect URIs. Match scheme, hostname, port, full path, and trailing slash exactly. Edit the client whose Client ID is saved in ZBRANO. Save and retry after Google applies the change. The email shown on this error page is not proof that the wrong Cloud project was selected.</p></details>
+<details><summary>Google will not accept the callback address</summary><p>Google requires HTTPS for web callbacks, with limited localhost exceptions, and rejects ordinary private IP hostnames. Open Home Assistant through its configured HTTPS domain, then copy that callback. A local address such as http://192.168.x.x is not interchangeable with your HTTPS address.</p></details>
+<details><summary>Wrong account, access_denied, or organization-only access</summary><p>Finish resolving any invalid-request error first. ZBRANO requests an account chooser. If necessary, retry from a private browser window signed into the intended account. Add that account under Audience → Test users for an External testing app. An Internal app only accepts accounts from its organization. A Workspace administrator may also restrict Gmail access.</p></details>
+<details><summary>invalid_client or setup still required</summary><p>Confirm the Client ID and secret belong to the same Web application client. Recopy them without extra spaces, save the add-on configuration and restart ZBRANO.</p></details>
+<details><summary>Insufficient permissions or Gmail API disabled</summary><p>Enable Gmail API in the client’s project. Check both requested Gmail scopes, then use Reauthorize in Installed plugins to grant the missing permissions. Confirm the connected account has Gmail available.</p></details>
+<details><summary>Connection expires after about seven days</summary><p>Google normally gives External testing apps using Gmail scopes a refresh token that expires after seven days. Reauthorize to continue testing. For broader distribution, follow Google’s production and verification requirements instead of treating Testing as permanent authorization.</p></details>
+<details><summary>Popup blocked or Home Assistant callback fails</summary><p>Allow popups and connect in a normal browser. If the callback reports Unauthorized, reopen ZBRANO through your signed-in Home Assistant session and retry. If you changed the address, recopy and register its callback first.</p></details>
+<details><summary>Disconnect or change mailbox</summary><p>Use Sign out on the installed Gmail plugin, then reconnect and choose the new account. Add it as a test user if required. You can also revoke access from <a href="https://myaccount.google.com/connections" target="_blank" rel="noopener noreferrer">Google account connections</a>.</p></details>
+<p>References: <a href="https://developers.google.com/identity/protocols/oauth2/web-server" target="_blank" rel="noopener noreferrer">Google redirect rules and authorization errors</a> · <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank" rel="noopener noreferrer">Google token expiration</a> · <a href="https://developers.google.com/workspace/gmail/api/auth/scopes" target="_blank" rel="noopener noreferrer">Gmail permissions</a></p>
+</section>
+<footer><a href="./">Return to ZBRANO</a> · These guides remain available in the catalog and on installed plugin cards.</footer>
+<script>
+const callback = document.getElementById('callback');
+callback.value = new URL('api/plugin-oauth/callback', window.location.href).href;
+document.getElementById('copy-callback').addEventListener('click', async () => {
+  const status = document.getElementById('copy-status');
+  try { await navigator.clipboard.writeText(callback.value); status.textContent = 'Callback copied. Paste it into Authorized redirect URIs in Google Cloud.'; }
+  catch { callback.focus(); callback.select(); status.textContent = 'Select and copy the callback address above.'; }
+});
+</script>
+</body>
+</html>

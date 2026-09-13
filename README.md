@@ -1,9 +1,13 @@
-## ZBRANO v0.13.248
+## ZBRANO v0.13.249
 
 ZBRANO combines Home Assistant chat, voice, entity control, memory, notifications,
 calendar and contact tools, plugins, and evidence-based automations. Automation Studio now uses
 a visual building-block toolbox, interactive node canvas, and contextual inspector;
 the established automation engine and stored definitions remain compatible.
+
+Version 0.13.249 adds complete GitHub and Gmail Direct setup guides. Open
+Plugins, find either plugin in Catalog or Installed, and select Setup guide.
+The Gmail guide includes the exact callback URL for your installation.
 
 Version 0.13.248 restores the original attachment and voice control space,
 with only a modest desktop prompt-row width reduction.

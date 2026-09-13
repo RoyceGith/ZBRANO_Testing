@@ -5,6 +5,10 @@ automations. Use Setup &amp; safety, When, Only if, Then, and optional Outcomes 
 interactive flow canvas. Natural-language creation, templates, drag-and-drop,
 saved automation compatibility, and the full Advanced editor remain available.
 
+Version 0.13.249 adds complete GitHub and Gmail Direct setup guides. Open
+Plugins, find either plugin in Catalog or Installed, and select Setup guide.
+The Gmail guide includes the exact callback URL for your installation.
+
 Version 0.13.248 restores the original attachment and voice control space,
 with only a modest desktop prompt-row width reduction.
 

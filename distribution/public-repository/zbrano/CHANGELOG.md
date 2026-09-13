@@ -1,5 +1,12 @@
 # Change log
 
+## 0.13.249
+
+- Add complete GitHub device authorization and Gmail Direct setup guides.
+- Keep guide links visible in catalog and installed plugin cards.
+- Include the exact Gmail callback, copy control, account selection and troubleshooting.
+- Replace the obsolete Gmail MCP setup link.
+
 ## 0.13.248
 
 - Restore original attachment, plugin and voice tool space.

@@ -1,9 +1,9 @@
 {
-  "version": "0.13.248",
+  "version": "0.13.249",
   "project": "ZBRANO Workshop Assistant",
   "note": "Release and Change Log.md",
   "source": "RoyceGith/ZBRANO_Core main",
-  "summary": "Restore original control space and modestly narrow only the desktop prompt row.",
+  "summary": "Add complete GitHub and Gmail Direct setup guides with persistent links and installation-specific callback help.",
   "history_backfill": [
     {
       "version": "0.13.0",
@@ -996,17 +996,21 @@
     {
       "version": "0.13.247",
       "summary": "Center a narrower prompt box beneath the conversation while preserving the existing control arrangement."
+    },
+    {
+      "version": "0.13.248",
+      "summary": "Restore original control space and modestly narrow only the desktop prompt row."
     }
   ],
   "release_entry": {
     "features": [
-      "Modest centered desktop prompt row with original control sizes."
+      "Complete GitHub and Gmail Direct guides accessible before and after connection."
     ],
     "fixes": [
-      "Restore attachment and voice tool space and original phone width."
+      "Replace obsolete Gmail MCP help and provide the exact callback with copy and troubleshooting."
     ],
     "validation": [
-      "Browser smoke, desktop and phone previews, regression and integration suites, and release validators."
+      "Browser guide availability, Ingress callback and clipboard fallback tests; regression and integration suites; release validators."
     ]
   },
   "features": [

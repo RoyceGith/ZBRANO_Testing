@@ -36,6 +36,16 @@ function currentPluginList(){
   return document.getElementById("plugin-list");
 }
 
+function pluginSetupGuide(item) {
+  if(item.id === 'gmail-official' || item.catalog_id === 'gmail-official' || String(item.url || '').startsWith('https://gmail.googleapis.com/gmail/v1')) return 'plugin-setup.html#gmail';
+  if(item.id === 'github-official' || item.catalog_id === 'github-official' || String(item.url || '').startsWith('https://api.githubcopilot.com/')) return 'plugin-setup.html#github';
+  return '';
+}
+function pluginSetupLink(item) {
+  const guide=pluginSetupGuide(item);
+  return guide ? `<a href="${guide}" target="_blank" rel="noopener noreferrer">Setup guide</a>` : '';
+}
+
 function pluginIconMarkup(item){
   const label=String(item.title||item.name||"Plugin");
   const fallback=catalogEsc(label.trim().charAt(0).toUpperCase()||"P");
@@ -70,7 +80,7 @@ async function loadPlugins(){
       const pluginStateSummary=p.builtin
         ?`${p.available_to_chat?"Available in Developer Mode":"Enable Developer Mode to use"} · ${p.healthy?"Healthy":"Unavailable"}`
         :`${p.enabled?"Enabled":"Installed · disabled"} · ${p.available_to_chat?"Available to chat":"Not available to chat"} · ${p.enabled_tool_count||0} tool${(p.enabled_tool_count||0)===1?"":"s"} enabled · ${p.approval_tool_count||0} require approval · ${p.healthy?"Healthy":"Unhealthy"} · token ${p.has_secret?"stored":"not set"}`;
-      row.innerHTML=`<div class="plugin-head"><div class="plugin-identity">${pluginIconMarkup(p)}<div><strong>${esc(p.name)}</strong><span class="plugin-meta">${esc(p.url)}</span><span class="plugin-meta">${pluginStateSummary}</span>${p.last_error?`<span class="plugin-meta">${esc(p.last_error)}</span>`:""}</div></div><div class="plugin-actions">${pluginActions}</div></div>${p.oauth_connected?`<div class="plugin-oauth-details"><span class="plugin-meta">OAuth account: ${esc(p.oauth_account||"not reported")}</span><span class="plugin-meta">Granted scopes: ${esc((p.oauth_scopes||[]).join(", ")||"not reported")}</span></div>`:""}${tools||'<div class="muted">No tools discovered.</div>'}`;
+      row.innerHTML=`<div class="plugin-head"><div class="plugin-identity">${pluginIconMarkup(p)}<div><strong>${esc(p.name)}</strong><span class="plugin-meta">${esc(p.url)}</span><span class="plugin-meta">${pluginStateSummary}</span>${p.last_error?`<span class="plugin-meta">${esc(p.last_error)}</span>`:""}</div></div><div class="plugin-actions">${pluginActions}${pluginSetupLink(p)}</div></div>${p.oauth_connected?`<div class="plugin-oauth-details"><span class="plugin-meta">OAuth account: ${esc(p.oauth_account||"not reported")}</span><span class="plugin-meta">Granted scopes: ${esc((p.oauth_scopes||[]).join(", ")||"not reported")}</span></div>`:""}${tools||'<div class="muted">No tools discovered.</div>'}`;
       listNode.appendChild(row);
       activateIconFallbacks(row);
     }
@@ -131,14 +141,16 @@ function catalogCard(item){
   }else if(item.auth_mode==="oauth"&&item.oauth_available){
     actions=`<button type="button" data-oauth-connect="${catalogEsc(item.id)}">${catalogEsc(item.setup_label||"Connect")}</button>`;
   }else if(item.id==="gmail-official"&&item.oauth_available===false){
-    const guide=item.docs_url?`<a href="${catalogEsc(item.docs_url)}" target="_blank" rel="noopener noreferrer">Setup guide</a>`:"";
+    const guide=!pluginSetupGuide(item)&&item.docs_url?`<a href="${catalogEsc(item.docs_url)}" target="_blank" rel="noopener noreferrer">Setup guide</a>`:"";
     actions=`<button type="button" data-copy-google-callback>Copy callback URL</button>${guide}`;
   }else if(item.installable===false){
-    const guide=item.docs_url?`<a href="${catalogEsc(item.docs_url)}" target="_blank" rel="noopener noreferrer">Setup guide</a>`:"";
+    const guide=!pluginSetupGuide(item)&&item.docs_url?`<a href="${catalogEsc(item.docs_url)}" target="_blank" rel="noopener noreferrer">Setup guide</a>`:"";
     actions=`<button type="button" disabled>${catalogEsc(item.setup_label||"Setup required")}</button>${guide}`;
   }else{
     actions=`<button type="button" data-catalog-install="${catalogEsc(item.id)}">Install</button>`;
   }
+  actions+=pluginSetupLink(item);
+  if(item.id==='gmail-official'&&!actions.includes('data-copy-google-callback'))actions+='<button type="button" data-copy-google-callback>Copy callback URL</button>';
   card.innerHTML=`<div class="catalog-title">${pluginIconMarkup(item)}<div><h3>${catalogEsc(item.title||item.name)}</h3><div class="plugin-meta">${catalogEsc(item.publisher||"")}</div></div></div>
     <div class="catalog-details">${catalogEsc(item.description||"No description available.")}</div>
     <div class="catalog-meta">${verified}${auth}<span class="catalog-pill">${catalogEsc(item.category||"other")}</span></div>

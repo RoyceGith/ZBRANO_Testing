@@ -167,7 +167,7 @@ const onboardingFixture = {
     {id:"notifications",title:"Notifications and autonomy",description:"Choose notification delivery",ready:false,required:false,target:"notifications",last_check:null,skipped:false},
   ],
   installation_report: {
-    generated_at: 1788300000, version: "0.13.248", ready: true, attention_count: 0, ready_count: 5,
+    generated_at: 1788300000, version: "0.13.249", ready: true, attention_count: 0, ready_count: 5,
     checks: [
       {id:"home_assistant",title:"Home Assistant",state:"ready",required:true,detail:"Connected to Home Assistant",target:"home_assistant"},
       {id:"model",title:"AI model",state:"ready",required:true,detail:"gpt-5-mini is configured",target:"model"},
@@ -175,7 +175,7 @@ const onboardingFixture = {
       {id:"backup",title:"Backup and restore",state:"ready",required:false,detail:"A portable ZBRANO backup can be exported from Settings",target:"memory"},
       {id:"automation_health",title:"Automation safety",state:"ready",required:false,detail:"2 saved; 0 need permission; 0 paused after failures",target:"automations"},
     ],
-    support_summary: "ZBRANO installation report · v0.13.248\nOverall: Ready\nHome Assistant: Connected\nAI model: Configured\nDevice access: 3 sensor devices / 1 control devices\nPersistent storage: Ready\nAutomations: 2 saved / 0 permission issues / 0 failure pauses",
+    support_summary: "ZBRANO installation report · v0.13.249\nOverall: Ready\nHome Assistant: Connected\nAI model: Configured\nDevice access: 3 sensor devices / 1 control devices\nPersistent storage: Ready\nAutomations: 2 saved / 0 permission issues / 0 failure pauses",
   },
 };
 
@@ -209,7 +209,7 @@ function apiFixture(url, method = "GET") {
   if (pathname === "/api/health") {
     return {
       status: "ok",
-      version: "0.13.248",
+      version: "0.13.249",
       speech_provider: "openai",
       speech_providers: {openai: {configured: true}, elevenlabs: {configured: false}},
     };
@@ -321,7 +321,7 @@ function apiFixture(url, method = "GET") {
     return {files:[],folders:[{name:"Documents",path:"Documents",file_count:1}],current_folder:""};
   }
   if (pathname === "/api/release-memory-sync") {
-    return {enabled: false, state: "disabled", version: "0.13.248", task_active: false};
+    return {enabled: false, state: "disabled", version: "0.13.249", task_active: false};
   }
   if (pathname === "/api/tab-activity") return {revisions: {}};
   if (pathname === "/api/grinder-monitor/status") return {enabled: false, connected: false};
@@ -395,6 +395,33 @@ async function main() {
     await page.waitForFunction(() => !document.getElementById("chat-list")?.textContent.includes("Loading"));
     assert.equal(await page.locator("#developer-tab").count(), 0, "Developer navigation must not be exposed");
     assert.equal(await page.locator("#developer-panel").count(), 0, "Developer workspace must not be exposed");
+
+    const setupCards = await page.evaluate(() => {
+      const results=[];
+      for(const id of ['github-official','gmail-official'])for(const state of ['missing','ready','installed']) {
+        const card=catalogCard({id,title:id,auth_mode:id==='github-official'?'github-oauth':'oauth',oauth_available:state!=='missing',installed:state==='installed',docs_url:'https://example.com/old-guide'});
+        results.push({id,state,links:[...card.querySelectorAll('a')].map(a=>a.getAttribute('href')),callback:!!card.querySelector('[data-copy-google-callback]')});
+      }
+      return results;
+    });
+    for(const card of setupCards) {
+      assert.deepEqual(card.links,[`plugin-setup.html#${card.id==='github-official'?'github':'gmail'}`], `Setup guide must remain available: ${card.id} ${card.state}`);
+      if(card.id==='gmail-official')assert.equal(card.callback,true);
+    }
+    const guidePage=await browser.newPage({viewport:{width:390,height:800}});
+    const guidePrefix=`http://127.0.0.1:${address.port}/api/hassio_ingress/setup-fixture/`;
+    await guidePage.route('**/setup-fixture/plugin-setup.html',route=>route.fulfill({contentType:'text/html',body:fs.readFileSync(path.join(staticRoot,'plugin-setup.html'),'utf8')}));
+    await guidePage.goto(guidePrefix+'plugin-setup.html#gmail');
+    assert.equal(await guidePage.locator('#callback').inputValue(),guidePrefix+'api/plugin-oauth/callback');
+    await guidePage.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.copiedCallback=text;}}}));
+    await guidePage.locator('#copy-callback').click();
+    assert.equal(await guidePage.evaluate(()=>window.copiedCallback),guidePrefix+'api/plugin-oauth/callback');
+    await guidePage.evaluate(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async()=>{throw new Error('denied');}}}));
+    await guidePage.locator('#copy-callback').click();
+    assert.match(await guidePage.locator('#copy-status').innerText(),/Select and copy/);
+    assert.equal(await guidePage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,'Guide must fit a phone');
+    if(process.env.ZBRANO_SETUP_SCREENSHOT)await guidePage.screenshot({path:process.env.ZBRANO_SETUP_SCREENSHOT,fullPage:true});
+    await guidePage.close();
 
     const chooseLanguage = value => page.locator("#preferred-language").evaluate((element, language) => {
       element.value = language;
